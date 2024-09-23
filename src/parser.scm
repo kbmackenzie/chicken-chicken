@@ -10,3 +10,9 @@
       (drop-rec (+ i 1))
       (string-drop str i)))
   (drop-rec 0))
+
+(define (count-chicken line) (#| todo |#))
+
+(define (sep-lines str) (#| todo |#))
+
+(define (str-take-while str predicate) (#| todo |#))
