@@ -1,4 +1,4 @@
-((synopsis "CHICKEN interpreter written in Chicken Scheme")
+((synopsis "Chicken interpreter written in CHICKEN Scheme")
  (author "kbmackenzie")
  (license "GPL-3.0-only")
  (dependencies srfi-13))
