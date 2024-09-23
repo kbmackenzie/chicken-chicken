@@ -5,6 +5,12 @@
   (define chicken-length  (string-length chicken-word))
   (define chicken-letters (string->list "chicken"))
 
+  (define-record-type :parser
+    (parser result value)
+    parser? 
+    (result parser-result)
+    (value  parser-value))
+
   (define (count-chicken line) 
     (define (count num pos)
       (cond ((is-chicken line pos) (count (+ 1 num) (+ pos chicken-length)))
