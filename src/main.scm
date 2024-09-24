@@ -29,18 +29,6 @@
   (define (parser-failure? p)
     (and (parser? p) (string=? (parser-result p) "failure")))
 
-  ;; Monad 'pure': 
-  (define parser-pure parser-success)
-
-  ;; Monad 'bind': (>>=)
-  (define (parser-bind m f)
-    (if (parser-success? m) (f (parser-value m)) m))
-
-  ;; Monad 'then': (>>)
-  (define (parser-then ma mb)
-    (parser-bind ma (lambda (_) mb)))
-
-
   #|
   ------------------------
   Parsing Chicken:
@@ -88,7 +76,16 @@
 
   (define (parse-instructions text)
     (define lines (sep-lines text))
-    (map
-      parser-value
-      (map count-chicken lines)))
+    (foldr
+      (lambda (line acc)
+        (define parsed-line (count-chicken line))
+        (cond
+          ((parser-failure? acc) acc)
+          ((parser-failure? parsed-line) parsed-line)
+          (else
+            (let ((instructions (parser-value acc))
+                  (instruction  (parser-value parsed-line)))
+              (parser-success (cons instruction instructions))))))
+      (parser-success '()) ;; 0 lines is still a success!
+      lines))
 )
