@@ -74,8 +74,8 @@
           (parser-success num))
         (else
           (let ()
-            (define unrec (string-ref line pos))
-            (define message (sprintf "unrecognized character at ~S: ~S" pos unrec))
+            (define unrecognized (string (string-ref line pos)))
+            (define message (sprintf "unrecognized character at ~A: ~S" pos unrecognized))
             (parser-failure message)))))
     (count 0 0))
 
