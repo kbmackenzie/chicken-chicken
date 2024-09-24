@@ -24,10 +24,10 @@
     (parser "failure" value))
 
   (define (parser-success? p)
-    (string=? (parser-result p) "success"))
+    (and (parser? p) (string=? (parser-result p) "success")))
 
   (define (parser-failure? p)
-    (string=? (parser-result p) "failure"))
+    (and (parser? p) (string=? (parser-result p) "failure")))
 
   ;; Monad 'pure': 
   (define parser-pure parser-success)
