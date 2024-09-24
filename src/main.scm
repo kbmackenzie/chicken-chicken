@@ -1,8 +1,8 @@
 (module chicken-in-chicken ()
-  (import scheme (chicken base) srfi-13)
+  (import scheme (chicken base) (chicken string) (chicken format) srfi-13)
 
   (define chicken-string  "chicken")
-  (define chicken-length  (string-length chicken-word))
+  (define chicken-length  (string-length chicken-string))
   (define chicken-letters (string->list "chicken"))
 
   #|
@@ -41,27 +41,54 @@
     (parser-bind ma (lambda (_) mb)))
 
 
-  #| We can finally begin working on parsing instructions now! |#
+  #|
+  ------------------------
+  Parsing Chicken:
+  ------------------------
+  |#
+
+  (define (is-space str pos)
+    (and
+      (< pos (string-length str))
+      (eqv? (string-ref str pos) #\ )))
+
+  (define (skip-spaces str pos)
+    (if (is-space str pos) (skip-spaces str (+ 1 pos)) pos))
+
+  (define (is-chicken str start-pos)
+    (define len (string-length str))
+    (define (compare-letters letters pos)
+      (if (null? letters)
+        #t
+        (and
+          (< pos len)
+          (eqv? (string-ref str pos) (car letters))
+          (compare-letters (cdr letters) (+ 1 pos)))))
+    (compare-letters chicken-letters start-pos))
+
   (define (count-chicken line) 
     (define len (string-length line))
     (define (count num pos)
       (cond
         ((is-chicken line pos)
           (count (+ 1 num) (+ pos chicken-length)))
-        ((is-whitespace line pos)
-          (count (+ 1 num) (skip-whitespace line pos)))
+        ((is-space line pos)
+          (count num (skip-spaces line pos)))
         ((>= pos len)
           (parser-success num))
         (else
-          (begin
+          (let ()
             (define unrec (string-ref line pos))
             (define message (sprintf "unrecognized character at ~S: ~S" pos unrec))
             (parser-failure message)))))
     (count 0 0))
 
   (define (sep-lines str)
-    (#| todo |#))
+    (string-split str "\n" #t))
 
-  (define (str-take-while str predicate)
-    (#| todo |#))
+  (define (parse-instructions text)
+    (define lines (sep-lines text))
+    (map
+      parser-value
+      (map count-chicken lines)))
 )
