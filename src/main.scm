@@ -29,6 +29,20 @@
   (define (parser-failure? p)
     (and (parser? p) (string=? (parser-result p) "failure")))
 
+  ; Monadic operations.
+  ; The parser type is basically just an Either monad!
+
+  ; pure
+  (define parser-pure parser-success)
+
+  ; bind (>>=)
+  (define (parser-bind ma f)
+    (if (parser-failure? ma) ma (f (parser-value ma))))
+
+  ; then (>>)
+  (define (parser-then ma mb)
+    (parser-bind ma (lambda (_) mb)))
+
   #|
   ------------------------
   Parsing Chicken:
@@ -75,17 +89,13 @@
     (string-split str "\n" #t))
 
   (define (parse-instructions text)
-    (define lines (sep-lines text))
     (foldr
-      (lambda (line acc)
-        (define parsed-line (count-chicken line))
-        (cond
-          ((parser-failure? acc) acc)
-          ((parser-failure? parsed-line) parsed-line)
-          (else
-            (let ((instructions (parser-value acc))
-                  (instruction  (parser-value parsed-line)))
-              (parser-success (cons instruction instructions))))))
-      (parser-success '()) ;; 0 lines is still a success!
-      lines))
+      (lambda (line accumulator)
+        (parser-bind accumulator
+          (lambda (instructions)
+            (parser-bind (count-chicken line)
+              (lambda (instruction)
+                (parser-pure (cons instruction instructions)))))))
+      (parser-pure '()) ;; 0 lines is still a success!
+      (sep-lines text)))
 )
