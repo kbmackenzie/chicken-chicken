@@ -5,12 +5,9 @@
   (define chicken-length  (string-length chicken-string))
   (define chicken-letters (string->list "chicken"))
 
-  #|
-  ------------------------
-  Parser:
-  ------------------------
-  |#
-
+  ; ------------------------
+  ; Parser:
+  ; ------------------------
   (define-record-type :parser
     (parser result value)
     parser? 
@@ -43,12 +40,9 @@
   (define (parser-then ma mb)
     (parser-bind ma (lambda (_) mb)))
 
-  #|
-  ------------------------
-  Parsing Chicken:
-  ------------------------
-  |#
-
+  ; ------------------------
+  ; Parsing Chicken:
+  ; ------------------------
   (define (is-space str pos)
     (and
       (< pos (string-length str))
@@ -96,6 +90,6 @@
             (parser-bind (count-chicken line)
               (lambda (instruction)
                 (parser-pure (cons instruction instructions)))))))
-      (parser-pure '()) ;; 0 lines is still a success!
+      (parser-pure '()) ; 0 lines is still a success!
       (sep-lines text)))
 )
