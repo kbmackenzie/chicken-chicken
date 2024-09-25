@@ -15,16 +15,16 @@
     (value  parser-value))
 
   (define (parser-success value)
-    (parser "success" value))
+    (parser 'success value))
 
   (define (parser-failure value)
-    (parser "failure" value))
+    (parser 'failure value))
 
   (define (parser-success? p)
-    (and (parser? p) (string=? (parser-result p) "success")))
+    (and (parser? p) (eqv? (parser-result p) 'success)))
 
   (define (parser-failure? p)
-    (and (parser? p) (string=? (parser-result p) "failure")))
+    (and (parser? p) (eqv? (parser-result p) 'failure)))
 
   ; Monadic operations.
   ; The parser type is basically just an Either monad!
