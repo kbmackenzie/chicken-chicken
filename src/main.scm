@@ -64,12 +64,9 @@
     (define len (string-length line))
     (define (count num pos)
       (cond
-        ((is-chicken line pos)
-          (count (+ 1 num) (+ pos chicken-length)))
-        ((is-space line pos)
-          (count num (skip-spaces line pos)))
-        ((>= pos len)
-          (parser-success num))
+        ((is-chicken line pos) (count (+ 1 num) (+ pos chicken-length)))
+        ((is-space line pos)   (count num (skip-spaces line pos)))
+        ((>= pos len)          (parser-success num))
         (else
           (let ()
             (define unrecognized (string (string-ref line pos)))
