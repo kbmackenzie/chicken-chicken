@@ -1,5 +1,5 @@
 (module chicken-in-chicken ()
-  (import scheme (chicken base) (chicken string) (chicken format) srfi-13)
+  (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
 
   (define chicken-string  "chicken")
   (define chicken-length  (string-length chicken-string))
@@ -29,16 +29,14 @@
   ; Monadic operations.
   ; The parser type is basically just an Either monad!
 
-  ; pure
-  (define parser-pure parser-success)
-
-  ; bind (>>=)
-  (define (parser-bind ma f)
-    (if (parser-failure? ma) ma (f (parser-value ma))))
-
-  ; then (>>)
-  (define (parser-then ma mb)
-    (parser-bind ma (lambda (_) mb)))
+  (define-monad
+    <parser>
+    (lambda (a)   ; pure
+      (parser-success a))
+    (lambda (m f) ; bind
+      (if (parser-failure? m) m (f (parser-value m))))
+    (lambda (e)   ; fail
+      (parser-failure e)))
 
   ; ------------------------
   ; Parsing Chicken:
@@ -85,11 +83,10 @@
   (define (parse-instructions text)
     (foldr
       (lambda (line accumulator)
-        (parser-bind accumulator
-          (lambda (instructions)
-            (parser-bind (count-chicken line)
-              (lambda (instruction)
-                (parser-pure (cons instruction instructions)))))))
-      (parser-pure '()) ; 0 lines is still a success!
+        (do-using <parser>
+          (instructions <- accumulator)
+          (instruction  <- (count-chicken line))
+          (return (cons instruction instructions))))
+      (<parser>-unit '())
       (sep-lines text)))
 )
