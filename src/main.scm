@@ -86,4 +86,37 @@
           (return (cons instruction instructions))))
       (<parser>-unit '())
       (sep-lines text)))
+
+  ; ------------------------
+  ; Utils
+  ; ------------------------
+  (define (clamp-number n lower upper)
+    (min (max n lower) upper))
+
+  ; ------------------------
+  ; Instructions:
+  ; ------------------------
+
+  ; Instructions are represented purely as integer numbers from 0 to 10.
+  ; Each number represents an opcode.
+
+  ; Opcodes are clamped to a [0, 10] range.
+  ; Any number greater or equal to 10 is considered a 'push' instruction.
+
+  (define (clamp-opcode opcode)
+    (clamp-number opcode 0 10))
+
+  (define (instruction->string instr)
+    (case (clamp-opcode instr)
+      ((0)  "exit"    )
+      ((1)  "chicken" )
+      ((2)  "add"     )
+      ((3)  "subtract")
+      ((4)  "multiply")
+      ((5)  "compare" )
+      ((6)  "load"    )
+      ((7)  "store"   )
+      ((8)  "jump"    )
+      ((9)  "char"    )
+      (else "push"    )))
 )
