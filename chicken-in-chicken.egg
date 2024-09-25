@@ -2,4 +2,7 @@
  (version "1.0.0")
  (author "kbmackenzie")
  (license "GPL-3.0-only")
- (dependencies srfi-13 monad))
+ (dependencies srfi-13 monad)
+ (components
+   (extension chicken-in-chicken
+      (source "./src/main.scm"))))
