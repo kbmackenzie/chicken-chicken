@@ -106,17 +106,19 @@
   (define (to-opcode num)
     (clamp-number (inexact->exact num) 0 10))
 
+  (define instruction-names
+    #("exit"
+      "chicken"
+      "add"
+      "subtract"
+      "multiply"
+      "compare"
+      "load"
+      "store"
+      "jump"
+      "char"
+      "push"))
+
   (define (instruction->string instr)
-    (case (to-opcode instr)
-      ((0)  "exit"    )
-      ((1)  "chicken" )
-      ((2)  "add"     )
-      ((3)  "subtract")
-      ((4)  "multiply")
-      ((5)  "compare" )
-      ((6)  "load"    )
-      ((7)  "store"   )
-      ((8)  "jump"    )
-      ((9)  "char"    )
-      (else "push"    )))
+    (vector-ref instruction-names (to-opcode instr)))
 )
