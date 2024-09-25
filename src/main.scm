@@ -103,11 +103,11 @@
   ; Opcodes are clamped to a [0, 10] range.
   ; Any number greater or equal to 10 is considered a 'push' instruction.
 
-  (define (clamp-opcode opcode)
-    (clamp-number opcode 0 10))
+  (define (to-opcode num)
+    (clamp-number (inexact->exact num) 0 10))
 
   (define (instruction->string instr)
-    (case (clamp-opcode instr)
+    (case (to-opcode instr)
       ((0)  "exit"    )
       ((1)  "chicken" )
       ((2)  "add"     )
