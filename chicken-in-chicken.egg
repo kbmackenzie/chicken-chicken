@@ -5,4 +5,7 @@
  (dependencies srfi-13 monad)
  (components
    (extension chicken-in-chicken
-      (source "./src/main.scm"))))
+     (source "./src/main.scm"))
+   (program read-chicken
+     (source "./src/cli.scm")
+     (component-dependencies chicken-in-chicken))))
