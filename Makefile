@@ -18,6 +18,9 @@ all: build
 build:
 	chicken-install
 
+test:
+	chicken-install -test
+
 tidy:
 	@# Clean up generated build files (they pollute the directory):
 	@rm -f ./*.build.sh ./*.import.scm ./*.install.sh ./*.link ./*.o ./*.so
@@ -25,4 +28,4 @@ tidy:
 clean:
 	@rm -r $(LOCAL_COOP)
 
-.PHONY: all build tidy clean
+.PHONY: all build test tidy clean
