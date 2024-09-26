@@ -1,5 +1,5 @@
-# This Makefile creates and manages a local env for CHICKEN Scheme.
-# All dependencies are installed in the local '.chicken' repository.
+# This Makefile manages a local environment for CHICKEN Scheme.
+# All dependencies are installed in the local '.chicken' directory.
 
 LOCAL_COOP  := $(CURDIR)/.chicken
 
@@ -13,6 +13,14 @@ export CHICKEN_REPOSITORY_PATH    := $(LOCAL_REPO):$(SYSTEM_REPO)
 
 export PATH := $(LOCAL_COOP)/bin:$(PATH)
 
+# Generated build files (should be cleaned, they're an eyesore)
+BUILD_FILES = $(wildcard *.o) 			   \
+							$(wildcard *.so)         \
+							$(wildcard *.link) 			 \
+							$(wildcard *.build.sh)   \
+							$(wildcard *.import.scm) \
+							$(wildcard *.install.sh)
+
 all: build
 
 build:
@@ -22,10 +30,9 @@ test:
 	chicken-install -test
 
 tidy:
-	@# Clean up generated build files (they pollute the directory):
-	@rm -f ./*.build.sh ./*.import.scm ./*.install.sh ./*.link ./*.o ./*.so
+	@rm $(BUILD_FILES)
 
-clean:
+clean: tidy
 	@rm -r $(LOCAL_COOP)
 
 .PHONY: all build test tidy clean
