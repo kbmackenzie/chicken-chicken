@@ -30,9 +30,9 @@ test:
 	chicken-install -test
 
 tidy:
-	@rm $(BUILD_FILES)
+	@rm -f $(BUILD_FILES)
 
 clean: tidy
-	@rm -r $(LOCAL_COOP)
+	@rm -rf $(LOCAL_COOP)
 
 .PHONY: all build test tidy clean
