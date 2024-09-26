@@ -1,4 +1,15 @@
-(module chicken-in-chicken ()
+(module chicken-in-chicken
+  (parser?
+   parser-value
+   parser-result
+   parser-success
+   parser-failure
+   parser-success?
+   parser-failure?
+   parse-instructions
+   instruction->string
+  )
+
   (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
 
   (define chicken-string  "chicken")
