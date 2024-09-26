@@ -97,28 +97,34 @@
   ; Instructions:
   ; ------------------------
 
-  ; Instructions are represented purely as integer numbers from 0 to 10.
-  ; Each number represents an opcode.
-
-  ; Opcodes are clamped to a [0, 10] range.
-  ; Any number greater or equal to 10 is considered a 'push' instruction.
+  ; Instructions can be represented purely as integer numbers from 0 to infinity.
+  ; Any number greater than 9 is considered a 'push' instruction, however.
+  ; Thus, effectively, instruction opcodes can be clamped to a [0, 10] range.
+  ;
+  ; Note: In practice, the true value of a 'push' instruction affects the value pushed to the stack!
+  ; The value to be pushed to the stack is calculated as: 
+  ;   f(x) = x - 10
+  ; Where x is the numeric of the push instruction.
 
   (define (to-opcode num)
-    (clamp-number (inexact->exact num) 0 10))
+    (max (inexact->exact num) 0))
 
   (define instruction-names
-    #("exit"
-      "chicken"
-      "add"
-      "subtract"
-      "multiply"
-      "compare"
-      "load"
-      "store"
-      "jump"
-      "char"
-      "push"))
+    #("exit"      ; exit program
+      "chicken"   ; push the string "chicken" onto the stack
+      "add"       ; add two top stack values
+      "subtract"  ; subtract two top stack values
+      "multiply"  ; multiply two top stack values
+      "compare"   ; test equality of two top stack values, push result
+      "load"      ; double-wide, load value from stack or user input by index. too complex to sum up
+      "store"     ; store value from stack in another address. too complex to sum up.
+      "jump"      ; jump instruction; self-explanatory. moves the instruction pointer.
+      "char"      ; pop x from stack, push &#x (tl;dr: html-escape char)
+      "push"      ; pushes number to stack; already explained above
+    ))
 
   (define (instruction->string instr)
-    (vector-ref instruction-names (to-opcode instr)))
+    (vector-ref
+      instruction-names
+      (min (to-opcode instr) 10)))
 )
