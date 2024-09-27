@@ -9,7 +9,11 @@
         (close-input-port port)
         contents))
     (define instructions (parse-instructions contents))
+    (define transform-value
+      (if (parser-success? instructions)
+        instructions->string
+        (lambda (x) x)))
     (printf "parser ~A: ~S\n"
       (parser-result instructions)
-      (parser-value  instructions)))
+      (transform-value (parser-value instructions))))
   (command-line-arguments))

@@ -8,6 +8,7 @@
    parser-failure?
    parse-instructions
    instruction->string
+   instructions->string
   )
 
   (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
@@ -134,8 +135,21 @@
       "push"      ; pushes number to stack; already explained above
     ))
 
-  (define (instruction->string instr)
+  (define (instruction->string instruction)
     (vector-ref
       instruction-names
-      (min (to-opcode instr) 10)))
+      (min (to-opcode instruction) 10)))
+
+  (define (instructions->string instructions)
+    (define (show instructions car-is-operand)
+      (if (null? instructions)
+        '()
+        (cons
+          (if car-is-operand
+            (number->string (car instructions))
+            (instruction->string (car instructions)))
+          (show
+            (cdr instructions) 
+            (and (not car-is-operand) (= (car instructions) 6))))))
+    (show instructions #f))
 )
