@@ -100,12 +100,6 @@
       (sep-lines text)))
 
   ; ------------------------
-  ; Utils
-  ; ------------------------
-  (define (clamp-number n lower upper)
-    (min (max n lower) upper))
-
-  ; ------------------------
   ; Instructions:
   ; ------------------------
 
