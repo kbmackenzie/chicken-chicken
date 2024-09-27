@@ -131,9 +131,9 @@
 
   (define (show-instruction instruction)
     (define opcode (to-opcode instruction))
-    (cond
-      ((<= opcode 9) (vector-ref instruction-names opcode))
-      (else          (sprintf "push ~A" (- opcode 10)))))
+    (if (<= opcode 9)
+      (vector-ref instruction-names opcode)
+      (sprintf "push ~A" (- opcode 10))))
 
   (define (show-instructions instructions)
     (define (show instructions car-is-operand)
