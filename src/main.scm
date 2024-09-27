@@ -147,7 +147,7 @@
         '()
         (cons
           (if car-is-operand
-            (number->string (car instructions))
+            (sprintf "(operand: ~A)" (car instructions))
             (show-instruction (car instructions)))
           (show
             (cdr instructions) 
