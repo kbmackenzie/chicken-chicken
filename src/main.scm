@@ -122,23 +122,24 @@
     (max (inexact->exact num) 0))
 
   (define instruction-names
-    #("exit"      ; exit program
-      "chicken"   ; push the string "chicken" onto the stack
-      "add"       ; add two top stack values
-      "subtract"  ; subtract two top stack values
-      "multiply"  ; multiply two top stack values
-      "compare"   ; test equality of two top stack values, push result
-      "load"      ; double-wide, load value from stack or user input by index. too complex to sum up
-      "store"     ; store value from stack in another address. too complex to sum up.
-      "jump"      ; jump instruction; self-explanatory. moves the instruction pointer.
-      "char"      ; pop x from stack, push &#x (tl;dr: html-escape char)
-      "push"      ; pushes number to stack; already explained above
+    #("axe"     ; exit program
+      "chicken" ; push the string "chicken" onto the stack
+      "add"     ; add two top stack values
+      "fox"     ; subtract two top stack values
+      "rooster" ; multiply two top stack values
+      "compare" ; test equality of two top stack values, push result
+      "pick"    ; double-wide, load value from stack or user input by index. too complex to sum up
+      "peck"    ; store value from stack in another address. too complex to sum up.
+      "fr"      ; jump instruction; self-explanatory. moves the instruction pointer.
+      "BBQ"     ; pop x from stack, push &#x (tl;dr: html-escape char)
+      "push"    ; pushes number to stack; already explained above
     ))
 
   (define (show-instruction instruction)
-    (vector-ref
-      instruction-names
-      (min (to-opcode instruction) 10)))
+    (define opcode (to-opcode instruction))
+    (cond
+      ((<= opcode 9) (vector-ref instruction-names opcode))
+      (else          (sprintf "push ~A" (- opcode 10)))))
 
   (define (show-instructions instructions)
     (define (show instructions car-is-operand)
