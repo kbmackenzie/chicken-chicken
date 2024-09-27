@@ -11,7 +11,7 @@
     (define instructions (parse-instructions contents))
     (define transform-value
       (if (parser-success? instructions)
-        instructions->string
+        show-instructions
         (lambda (x) x)))
     (printf "parser ~A: ~S\n"
       (parser-result instructions)
