@@ -79,18 +79,18 @@
   ; push:     pushes number to stack; already explained above
 
   ; A little util for later.
-  (define (has-operand? instruction)
-    (not (eqv? (instruction-operand instruction) #f)))
+  (define (has-operand? instr)
+    (not (eqv? (instruction-operand instr) #f)))
 
-  (define (instruction->string instruction)
-    (case (instruction-opcode instruction)
+  (define (instruction->string instr)
+    (case (instruction-opcode instr)
       ((0) "axe"     )
       ((1) "chicken" )
       ((2) "add"     )
       ((3) "fox"     )
       ((4) "rooster" )
       ((5) "compare" )
-      ((6) (sprintf "pick ~A" (instruction-operand instruction)))
+      ((6) (sprintf "pick ~A" (instruction-operand instr)))
       ((7) "peck"    )
       ((8) "fr"      )
       ((9) "BBQ"     )
@@ -147,7 +147,7 @@
     (if (null? lines)
       (parser-success '())
       (do-using <parser>
-        (instruction <- (parse-instruction lines))
-        (rest        <- (parse-instructions (if (has-operand? instruction) (cddr lines) (cdr lines))))
-        (return (cons instruction rest)))))
+        (instr <- (parse-instruction lines))
+        (rest  <- (parse-instructions (if (has-operand? instr) (cddr lines) (cdr lines))))
+        (return (cons instr rest)))))
 )
