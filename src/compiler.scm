@@ -108,27 +108,37 @@
     (if (is-space str position) (skip-spaces str (+ 1 position)) position))
 
   (define (is-chicken str start-position)
-    (define (compare-letters letters position)
-      (if (null? letters)
-        #t
-        (and
-          (< position (string-length str))
-          (eqv? (string-ref str position) (car letters))
-          (compare-letters (cdr letters) (+ 1 position)))))
-    (compare-letters chicken-letters start-position))
+    (letrec
+      ((compare-letters
+         (lambda (letters position)
+           (if (null? letters)
+             #t
+             (and
+               (< position (string-length str))
+               (eqv? (string-ref str position) (car letters))
+               (compare-letters (cdr letters) (+ 1 position)))))))
+      (compare-letters chicken-letters start-position)))
+
+  (define (generate-error str position line-number)
+    (sprintf "~A: unrecognized character at ~A: ~S"
+      line-number
+      position
+      (string (string-ref str position))))
 
   (define (count-chicken line) 
-    (define line-length (string-length line))
-    (define (count i position)
-      (cond
-        ((is-chicken line position) (count (+ 1 i) (+ position chicken-length)))
-        ((is-space line position)   (count i (skip-spaces line position)))
-        ((>= position line-length)  (parser-success i))
-        (else
-          (let* ((unrecognized (string (string-ref line position)))
-                 (message (sprintf "unrecognized character at ~A: ~S" position unrecognized)))
-            (parser-failure message)))))
-    (count 0 0))
+    (letrec
+      ((line-number  (car line))
+       (line-content (cdr line))
+       (line-length  (string-length (cdr line)))
+       (count
+         (lambda (chickens position)
+           (cond
+             ((is-chicken line-content position) (count (+ 1 chickens) (+ position chicken-length)))
+             ((is-space line-content position)   (count chickens (skip-spaces line position)))
+             ((>= position line-length)          (parser-success chickens))
+             (else
+               (parser-failure (generate-error line-content position line-number)))))))
+      (count 0 0)))
 
   (define (parse-instruction lines)
     (do-using <parser>
