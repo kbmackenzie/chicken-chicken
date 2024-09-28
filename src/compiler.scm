@@ -7,8 +7,7 @@
    parser-success?
    parser-failure?
    parse-instructions
-   show-instruction
-   show-instructions
+   instruction->string
   )
 
   (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
@@ -51,6 +50,53 @@
       (parser-failure e)))
 
   ; ------------------------
+  ; Instructions:
+  ; ------------------------
+
+  (define-record-type :instruction
+    (instruction opcode operand)
+    instruction?
+    (opcode instruction-opcode)
+    (operand instruction-operand))
+
+  ; Instructions can be represented purely as integer numbers from 0 to infinity.
+  ; Any number greater than 9 is considered a 'push' instruction, however.
+  ;
+  ; With 'push' instructions, the value to be pushed to the stack is calculated as: 
+  ;   f(x) = x - 10
+  ; Where x is the numeric value of the instruction.
+
+  ; axe:      exit program
+  ; chicken:  push the string "chicken" onto the stack
+  ; add:      add two top stack values
+  ; fox:      subtract two top stack values
+  ; rooster:  multiply two top stack values
+  ; compare:  test equality of two top stack values, push result
+  ; pick:     double-long, load value from stack or user input by index. too complex to sum up
+  ; peck:     store value from stack in another address. too complex to sum up.
+  ; fr:       jump instruction; self-explanatory. moves the instruction pointer.
+  ; BBQ:      pop x from stack, push &#x (tl;dr: html-escape char)
+  ; push:     pushes number to stack; already explained above
+
+  ; A little util for later.
+  (define (has-operand? instruction)
+    (boolean? (instruction-operand instruction)))
+
+  (define (instruction->string instruction)
+    (case (instruction-opcode instruction)
+      ((0) "axe"     )
+      ((1) "chicken" )
+      ((2) "add"     )
+      ((3) "fox"     )
+      ((4) "rooster" )
+      ((5) "compare" )
+      ((6) (sprintf "pick ~A" (instruction-operand instruction)))
+      ((7) "peck"    )
+      ((8) "fr"      )
+      ((9) "BBQ"     )
+      (else => (lambda (n) (sprintf "push ~A" n)))))
+
+  ; ------------------------
   ; Parsing Chicken:
   ; ------------------------
   (define (is-space str pos)
@@ -86,65 +132,23 @@
             (parser-failure message)))))
     (count 0 0))
 
-  (define (sep-lines str)
-    (string-split str "\n" #t))
+  (define (parse-instruction lines)
+    (do-using <parser>
+      (opcode  <- (count-chicken (car lines)))
+      (operand <- (if (= opcode 6) (parse-operand (cdr lines)) (return #f)))
+      (return (instruction opcode operand))))
 
-  (define (parse-instructions text)
-    (foldr
-      (lambda (line accumulator)
-        (do-using <parser>
-          (instructions <- accumulator)
-          (instruction  <- (count-chicken line))
-          (return (cons instruction instructions))))
-      (<parser>-unit '())
-      (sep-lines text)))
+  (define (parse-operand lines)
+    (do-using <parser>
+      (if (null? lines)
+        (fail "expected operand; got none")
+        (count-chicken (car lines)))))
 
-  ; ------------------------
-  ; Instructions:
-  ; ------------------------
-
-  ; Instructions can be represented purely as integer numbers from 0 to infinity.
-  ; Any number greater than 9 is considered a 'push' instruction, however.
-  ; Thus, effectively, instruction opcodes can be clamped to a [0, 10] range.
-  ;
-  ; Note: In practice, the true value of a 'push' instruction affects the value pushed to the stack!
-  ; The value to be pushed to the stack is calculated as: 
-  ;   f(x) = x - 10
-  ; Where x is the numeric of the push instruction.
-
-  (define (to-opcode num)
-    (max (inexact->exact num) 0))
-
-  (define instruction-names
-    #("axe"     ; exit program
-      "chicken" ; push the string "chicken" onto the stack
-      "add"     ; add two top stack values
-      "fox"     ; subtract two top stack values
-      "rooster" ; multiply two top stack values
-      "compare" ; test equality of two top stack values, push result
-      "pick"    ; double-wide, load value from stack or user input by index. too complex to sum up
-      "peck"    ; store value from stack in another address. too complex to sum up.
-      "fr"      ; jump instruction; self-explanatory. moves the instruction pointer.
-      "BBQ"     ; pop x from stack, push &#x (tl;dr: html-escape char)
-      "push"    ; pushes number to stack; already explained above
-    ))
-
-  (define (show-instruction instruction)
-    (define opcode (to-opcode instruction))
-    (if (<= opcode 9)
-      (vector-ref instruction-names opcode)
-      (sprintf "push ~A" (- opcode 10))))
-
-  (define (show-instructions instructions)
-    (define (show instructions car-is-operand)
-      (if (null? instructions)
-        '()
-        (cons
-          (if car-is-operand
-            (sprintf "(operand: ~A)" (car instructions))
-            (show-instruction (car instructions)))
-          (show
-            (cdr instructions) 
-            (and (not car-is-operand) (= (car instructions) 6))))))
-    (show instructions #f))
+  (define (parse-instructions lines)
+    (if (null? lines)
+      (parser-success '())
+      (do-using <parser>
+        (instruction <- (parse-instruction lines))
+        (rest        <- (parse-instructions (if (has-operand? instruction) (cddr lines) (cdr lines))))
+        (return (cons instruction rest)))))
 )
