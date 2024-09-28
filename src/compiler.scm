@@ -121,7 +121,7 @@
 
   (define (generate-error line position)
     (sprintf "~A: unrecognized character at ~A: ~S"
-      (car line)
+      (+ (car line) 1)
       position
       (string (string-ref (cadr line) position))))
 
