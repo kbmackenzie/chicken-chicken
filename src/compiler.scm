@@ -119,11 +119,11 @@
                (compare-letters (cdr letters) (+ 1 position)))))))
       (compare-letters chicken-letters start-position)))
 
-  (define (generate-error str position line-number)
+  (define (generate-error line position)
     (sprintf "~A: unrecognized character at ~A: ~S"
-      line-number
+      (car line)
       position
-      (string (string-ref str position))))
+      (string (string-ref (cadr line) position))))
 
   (define (count-chicken line) 
     (letrec
@@ -137,7 +137,7 @@
              ((is-space line-content position)   (count chickens (skip-spaces line-content position)))
              ((>= position line-length)          (parser-success chickens))
              (else
-               (parser-failure (generate-error line-content position line-number)))))))
+               (parser-failure (generate-error line position)))))))
       (count 0 0)))
 
   (define (parse-instruction lines)
