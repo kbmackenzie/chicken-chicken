@@ -120,10 +120,10 @@
       (compare-letters chicken-letters start-position)))
 
   (define (generate-error line position)
-    (sprintf "line ~A: unrecognized character at ~A: ~S"
+    (sprintf "line ~A: unrecognized character at ~A: ~A"
       (+ (car line) 1)
       position
-      (string (string-ref (cadr line) position))))
+      (string-ref (cadr line) position)))
 
   (define (count-chicken line) 
     (letrec
