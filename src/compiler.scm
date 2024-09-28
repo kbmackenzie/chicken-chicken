@@ -126,9 +126,8 @@
         ((is-space line pos)   (count num (skip-spaces line pos)))
         ((>= pos len)          (parser-success num))
         (else
-          (let ()
-            (define unrecognized (string (string-ref line pos)))
-            (define message (sprintf "unrecognized character at ~A: ~S" pos unrecognized))
+          (let ((unrecognized (string (string-ref line pos)))
+                (message (sprintf "unrecognized character at ~A: ~S" pos unrecognized)))
             (parser-failure message)))))
     (count 0 0))
 
