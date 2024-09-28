@@ -99,35 +99,34 @@
   ; ------------------------
   ; Parsing Chicken:
   ; ------------------------
-  (define (is-space str pos)
+  (define (is-space str position)
     (and
-      (< pos (string-length str))
-      (eqv? (string-ref str pos) #\ )))
+      (< position (string-length str))
+      (eqv? (string-ref str position) #\ )))
 
-  (define (skip-spaces str pos)
-    (if (is-space str pos) (skip-spaces str (+ 1 pos)) pos))
+  (define (skip-spaces str position)
+    (if (is-space str position) (skip-spaces str (+ 1 position)) position))
 
-  (define (is-chicken str start-pos)
-    (define len (string-length str))
-    (define (compare-letters letters pos)
+  (define (is-chicken str start-position)
+    (define (compare-letters letters position)
       (if (null? letters)
         #t
         (and
-          (< pos len)
-          (eqv? (string-ref str pos) (car letters))
-          (compare-letters (cdr letters) (+ 1 pos)))))
-    (compare-letters chicken-letters start-pos))
+          (< position (string-length str))
+          (eqv? (string-ref str position) (car letters))
+          (compare-letters (cdr letters) (+ 1 position)))))
+    (compare-letters chicken-letters start-position))
 
   (define (count-chicken line) 
     (define line-length (string-length line))
-    (define (count i pos)
+    (define (count i position)
       (cond
-        ((is-chicken line pos) (count (+ 1 i) (+ pos chicken-length)))
-        ((is-space line pos)   (count i (skip-spaces line pos)))
-        ((>= pos line-length)  (parser-success i))
+        ((is-chicken line position) (count (+ 1 i) (+ position chicken-length)))
+        ((is-space line position)   (count i (skip-spaces line position)))
+        ((>= position line-length)  (parser-success i))
         (else
-          (let* ((unrecognized (string (string-ref line pos)))
-                 (message (sprintf "unrecognized character at ~A: ~S" pos unrecognized)))
+          (let* ((unrecognized (string (string-ref line position)))
+                 (message (sprintf "unrecognized character at ~A: ~S" position unrecognized)))
             (parser-failure message)))))
     (count 0 0))
 
