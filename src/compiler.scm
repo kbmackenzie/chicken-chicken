@@ -127,14 +127,14 @@
 
   (define (count-chicken line) 
     (letrec
-      ((line-number  (car line))
-       (line-content (cdr line))
-       (line-length  (string-length (cdr line)))
+      ((line-number  (car  line))
+       (line-content (cadr line))
+       (line-length  (string-length (cadr line)))
        (count
          (lambda (chickens position)
            (cond
              ((is-chicken line-content position) (count (+ 1 chickens) (+ position chicken-length)))
-             ((is-space line-content position)   (count chickens (skip-spaces line position)))
+             ((is-space line-content position)   (count chickens (skip-spaces line-content position)))
              ((>= position line-length)          (parser-success chickens))
              (else
                (parser-failure (generate-error line-content position line-number)))))))
