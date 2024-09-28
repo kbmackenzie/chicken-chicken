@@ -119,12 +119,12 @@
     (compare-letters chicken-letters start-pos))
 
   (define (count-chicken line) 
-    (define len (string-length line))
-    (define (count num pos)
+    (define line-length (string-length line))
+    (define (count i pos)
       (cond
-        ((is-chicken line pos) (count (+ 1 num) (+ pos chicken-length)))
-        ((is-space line pos)   (count num (skip-spaces line pos)))
-        ((>= pos len)          (parser-success num))
+        ((is-chicken line pos) (count (+ 1 i) (+ pos chicken-length)))
+        ((is-space line pos)   (count i (skip-spaces line pos)))
+        ((>= pos line-length)  (parser-success i))
         (else
           (let* ((unrecognized (string (string-ref line pos)))
                  (message (sprintf "unrecognized character at ~A: ~S" pos unrecognized)))
