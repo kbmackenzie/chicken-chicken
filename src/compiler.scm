@@ -80,7 +80,7 @@
 
   ; A little util for later.
   (define (has-operand? instruction)
-    (boolean? (instruction-operand instruction)))
+    (not (eqv? (instruction-operand instruction) #f)))
 
   (define (instruction->string instruction)
     (case (instruction-opcode instruction)
@@ -94,7 +94,7 @@
       ((7) "peck"    )
       ((8) "fr"      )
       ((9) "BBQ"     )
-      (else => (lambda (n) (sprintf "push ~A" n)))))
+      (else => (lambda (n) (sprintf "push ~A" (- n 10))))))
 
   ; ------------------------
   ; Parsing Chicken:

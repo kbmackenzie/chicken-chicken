@@ -11,7 +11,7 @@
     (define instructions (parse-instructions contents))
     (printf "parser ~A: ~S\n"
       (parser-result instructions)
-      (if (parser-success? instruction)
-        (map intruction->string (parser-value instructions))
+      (if (parser-success? instructions)
+        (map instruction->string (parser-value instructions))
         (parser-value instructions))))
   (command-line-arguments))
