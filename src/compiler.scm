@@ -127,8 +127,7 @@
 
   (define (count-chicken line) 
     (letrec
-      ((line-number  (car  line))
-       (line-content (cadr line))
+      ((line-content (cadr line))
        (line-length  (string-length (cadr line)))
        (count
          (lambda (chickens position)
