@@ -4,8 +4,8 @@
  (license "GPL-3.0-only")
  (dependencies srfi-1 srfi-13 monad)
  (components
-   (extension chicken-in-chicken
+   (extension chicken-chicken
      (source "./src/compiler.scm"))
    (program chicken-to-js
      (source "./src/cli.scm")
-     (component-dependencies chicken-in-chicken))))
+     (component-dependencies chicken-chicken))))
