@@ -158,4 +158,22 @@
         (instr <- (parse-instruction lines))
         (rest  <- (parse-instructions (if (has-operand? instr) (cddr lines) (cdr lines))))
         (return (cons instr rest)))))
+
+  ; ------------------------
+  ; Compiling Chicken:
+  ; ------------------------
+  (define (flat-map fn xs)
+    (flatten (map fn xs)))
+
+  (define (instruction->integer-list instrs)
+    (flat-map
+      (lambda (instr)
+        (if (has-operand? instrs)
+          (list (instruction-opcode instr) (instruction-operand instr))
+          (list (instruction-opcode instr))))
+      instrs))
+
+  (define (compile-instructions instrs)
+    (sprintf "[~A]"
+      (string-join (map string (instruction->integer-list instrs)) ", ")))
 )
