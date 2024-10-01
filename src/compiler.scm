@@ -1,4 +1,4 @@
-(module chicken-in-chicken
+(module chicken-chicken
   (parser?
    parser-value
    parser-result
