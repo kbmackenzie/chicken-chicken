@@ -1,53 +1,14 @@
 (module chicken-chicken
-  (parser?
-   parser-value
-   parser-result
-   parser-success
-   parser-failure
-   parser-success?
-   parser-failure?
-   parse-instructions
-   instruction->string
-  )
+  (parse-instructions
+   instruction->string)
 
   (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
+  (import either-monad)
+  ;(include-relative "either")
 
   (define chicken-string  "chicken")
   (define chicken-length  (string-length chicken-string))
   (define chicken-letters (string->list "chicken"))
-
-  ; ------------------------
-  ; Parser:
-  ; ------------------------
-  (define-record-type :parser
-    (parser result value)
-    parser? 
-    (result parser-result)
-    (value  parser-value))
-
-  (define (parser-success value)
-    (parser 'success value))
-
-  (define (parser-failure value)
-    (parser 'failure value))
-
-  (define (parser-success? p)
-    (and (parser? p) (eqv? (parser-result p) 'success)))
-
-  (define (parser-failure? p)
-    (and (parser? p) (eqv? (parser-result p) 'failure)))
-
-  ; Monadic operations.
-  ; The parser type is basically just an Either monad!
-
-  (define-monad
-    <parser>
-    (lambda (a)   ; pure
-      (parser-success a))
-    (lambda (m f) ; bind
-      (if (parser-failure? m) m (f (parser-value m))))
-    (lambda (e)   ; fail
-      (parser-failure e)))
 
   ; ------------------------
   ; Instructions:
@@ -134,27 +95,27 @@
            (cond
              ((is-chicken line-content position) (count (+ 1 chickens) (+ position chicken-length)))
              ((is-space line-content position)   (count chickens (skip-spaces line-content position)))
-             ((>= position line-length)          (parser-success chickens))
+             ((>= position line-length)          (either-right chickens))
              (else
-               (parser-failure (generate-error line position)))))))
+               (either-left (generate-error line position)))))))
       (count 0 0)))
 
   (define (parse-instruction lines)
-    (do-using <parser>
+    (do-using <either>
       (opcode  <- (count-chicken (car lines)))
       (operand <- (if (= opcode 6) (parse-operand (cdr lines)) (return #f)))
       (return (instruction opcode operand))))
 
   (define (parse-operand lines)
-    (do-using <parser>
+    (do-using <either>
       (if (null? lines)
         (fail "expected operand; got none")
         (count-chicken (car lines)))))
 
   (define (parse-instructions lines)
     (if (null? lines)
-      (parser-success '())
-      (do-using <parser>
+      (either-right '())
+      (do-using <either>
         (instr <- (parse-instruction lines))
         (rest  <- (parse-instructions (if (has-operand? instr) (cddr lines) (cdr lines))))
         (return (cons instr rest)))))
