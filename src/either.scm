@@ -6,10 +6,13 @@
    either-right?
    either-left
    either-left?
-   <either>
    <either>-unit
    <either>-bind
-   <either>-fail)
+   <either>-fail
+   either-fmap
+   either->string)
+
+  (import scheme (chicken base) (chicken format) monad)
 
   (define-record-type :either
     (either tag value)
@@ -30,10 +33,17 @@
     (and (either? e) (eqv? (either-tag e) 'left)))
 
   ; Monadic operations.
-  (define-monad
-    <either>
+  (define-monad <either>
     either-right
     (lambda (m f)
       (if (either-left? m) m (f (either-value m))))
     either-left)
+
+  (define (either-fmap f m)
+    (do-using <either>
+      (a <- m)
+      (return (f a))))
+
+  (define (either->string e)
+    (sprintf "either(~A): ~S" (either-tag e) (either-value e)))
 )
