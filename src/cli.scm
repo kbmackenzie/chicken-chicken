@@ -1,5 +1,5 @@
-(import chicken-chicken)
 (import scheme (chicken base) (chicken format) (chicken io) (chicken process-context) srfi-1)
+(import chicken-chicken either-monad)
 
 (define (read-lines-enumerated path)
   (let* ((port     (open-input-file path))
@@ -12,10 +12,9 @@
 (for-each
   (lambda (path)
     (define lines (read-lines-enumerated path))
-    (define instructions (parse-instructions lines))
-    (printf "parser ~A: ~S\n"
-      (parser-result instructions)
-      (if (parser-success? instructions)
-        (map instruction->string (parser-value instructions))
-        (parser-value instructions))))
+    (define instructions
+      (either-fmap
+        (lambda (xs) (map instruction->string xs))
+        (parse-instructions lines)))
+    (print (either->string instructions)))
   (command-line-arguments))
