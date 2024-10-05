@@ -3,8 +3,6 @@
    instruction->string)
 
   (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
-  (import either-monad)
-  ;(include-relative "either")
 
   (define chicken-string  "chicken")
   (define chicken-length  (string-length chicken-string))
@@ -95,9 +93,9 @@
            (cond
              ((is-chicken line-content position) (count (+ 1 chickens) (+ position chicken-length)))
              ((is-space line-content position)   (count chickens (skip-spaces line-content position)))
-             ((>= position line-length)          (either-right chickens))
+             ((>= position line-length)          (<either>-unit chickens))
              (else
-               (either-left (generate-error line position)))))))
+               (<either>-fail (generate-error line position)))))))
       (count 0 0)))
 
   (define (parse-instruction lines)
@@ -114,7 +112,7 @@
 
   (define (parse-instructions lines)
     (if (null? lines)
-      (either-right '())
+      (<either>-unit '())
       (do-using <either>
         (instr <- (parse-instruction lines))
         (rest  <- (parse-instructions (if (has-operand? instr) (cddr lines) (cdr lines))))
