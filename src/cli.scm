@@ -17,5 +17,5 @@
         (>>=
           (parse-instructions lines)
           (lambda (xs) (return (map instruction->string xs))))))
-    (print instructions))
+    (printf "~S\n" instructions))
   (command-line-arguments))
