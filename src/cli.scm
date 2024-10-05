@@ -1,5 +1,5 @@
-(import scheme (chicken base) (chicken format) (chicken io) (chicken process-context) srfi-1)
-(import chicken-chicken either-monad)
+(import scheme (chicken base) (chicken format) (chicken io) (chicken process-context) srfi-1 monad)
+(import chicken-chicken)
 
 (define (read-lines-enumerated path)
   (let* ((port     (open-input-file path))
@@ -13,8 +13,8 @@
   (lambda (path)
     (define lines (read-lines-enumerated path))
     (define instructions
-      (either-fmap
-        (lambda (xs) (map instruction->string xs))
-        (parse-instructions lines)))
-    (print (either->string instructions)))
+      (<either>-bind
+        (parse-instructions lines)
+        (lambda (xs) (return (map instruction->string xs)))))
+    (print instructions))
   (command-line-arguments))
