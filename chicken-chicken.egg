@@ -4,11 +4,8 @@
  (license "GPL-3.0-only")
  (dependencies srfi-1 srfi-13 monad)
  (components
-   (extension either-monad
-     (source "./src/either.scm"))
    (extension chicken-chicken
-     (source "./src/compiler.scm")
-     (component-dependencies either-monad))
+     (source "./src/compiler.scm"))
    (program chicken-to-js
      (source "./src/cli.scm")
-     (component-dependencies either-monad chicken-chicken))))
+     (component-dependencies chicken-chicken))))
