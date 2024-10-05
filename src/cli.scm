@@ -13,8 +13,9 @@
   (lambda (path)
     (define lines (read-lines-enumerated path))
     (define instructions
-      (<either>-bind
-        (parse-instructions lines)
-        (lambda (xs) (return (map instruction->string xs)))))
+      (do/m <either>
+        (>>=
+          (parse-instructions lines)
+          (lambda (xs) (return (map instruction->string xs))))))
     (print instructions))
   (command-line-arguments))
