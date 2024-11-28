@@ -7,8 +7,8 @@
 *.link
 *.o
 *.so
-chicken-to-js
 node_modules/
 *.min.js
-src/vm.scm
 .henhen/
+src/chicken-vm.scm
+chicken-chicken
