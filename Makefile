@@ -1,23 +1,45 @@
-NAME   := chicken-to-js
+NAME    	:= chicken-chicken
 
-VM_JS  := js/vm.min.js
-VM_SCM := src/vm.scm
+CSC     	?= csc
+INSTALL 	?= chicken-install
+DEPS      := srfi-1 srfi-13 monad
 
-all: build
+COMPILER  := chicken-to-js
+VM        := chicken-vm
 
-build: $(VM_SCM)
-	henhen build --verbose
+JS_DIR 		:= js
+VM_SOURCE := $(JS_DIR)/vm.min.js
 
-$(VM_SCM): $(VM_JS)
-	echo '(define vm #<<END' > $@
-	cat $< >> $@
+all: deps build
+build: $(NAME)
+
+$(NAME): $(COMPILER).o
+	$(CSC) -static -o $@ $^ -uses $(COMPILER) src/main.scm
+
+$(COMPILER).o: $(VM).o src/$(COMPILER).scm
+	$(CSC) -static -c -J $^ -unit $* -o $@ -uses $(VM)
+
+$(VM).o: src/$(VM).scm
+	$(CSC) -static -c -J $^ -unit $* -o $@
+
+src/$(VM).scm: $(VM_SOURCE)
+	echo '(module' $(VM) '(vm)' > $@
+	echo '(import scheme)'   >> $@
+	echo '(define vm #<<END' >> $@
+	cat $<     >> $@
 	echo 'END' >> $@
-	echo ')'   >> $@
+	echo '))'  >> $@
 
-$(VM_JS):
+$(VM_SOURCE):
 	cd ./js && npm install && npm run build
 
-clean:
-	rm -f $(VM_SCM) $(VM_JS)
+deps:
+	chicken-install $(DEPS)
 
-.PHONY: clean build
+clean:
+	rm -f *.o *.import.scm *.link
+
+fclean: clean
+	rm -f $(VM_SOURCE) $(NAME)
+
+.PHONY: build deps clean fclean
