@@ -31,7 +31,7 @@ src/$(VM).scm: $(VM_SOURCE)
 	echo '))'  >> $@
 
 $(VM_SOURCE):
-	cd ./js && npm install && npm run build
+	cd $(JS_DIR) && npm install && npm run build
 
 deps:
 	chicken-install $(DEPS)
