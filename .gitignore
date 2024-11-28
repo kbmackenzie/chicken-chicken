@@ -10,5 +10,5 @@
 node_modules/
 *.min.js
 .henhen/
-src/chicken-vm.scm
+src/vm.scm
 chicken-chicken
