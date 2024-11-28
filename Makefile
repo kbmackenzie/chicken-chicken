@@ -4,8 +4,8 @@ CSC     	?= csc
 INSTALL 	?= chicken-install
 DEPS      := srfi-1 srfi-13 monad
 
-COMPILER  := chicken-to-js
-VM        := chicken-vm
+COMPILER  := chicken-chicken.compiler
+VM        := chicken-chicken.vm
 
 JS_DIR 		:= js
 VM_SOURCE := $(JS_DIR)/vm.min.js
@@ -16,14 +16,14 @@ build: $(NAME)
 $(NAME): $(COMPILER).o
 	$(CSC) -static -o $@ $^ -uses $(COMPILER) src/main.scm
 
-$(COMPILER).o: $(VM).o src/$(COMPILER).scm
-	$(CSC) -static -c -J $^ -unit $* -o $@ -uses $(VM)
+$(COMPILER).o: $(VM).o src/compiler.scm
+	$(CSC) -static -c -J $^ -unit $(COMPILER) -o $@ -uses $(VM)
 
-$(VM).o: src/$(VM).scm
-	$(CSC) -static -c -J $^ -unit $* -o $@
+$(VM).o: src/vm.scm
+	$(CSC) -static -c -J $^ -unit $(VM) -o $@
 
-src/$(VM).scm: $(VM_SOURCE)
-	echo '(module' $(VM) '(vm)' > $@
+src/vm.scm: $(VM_SOURCE)
+	echo '(module (chicken-chicken vm) (vm)' > $@
 	echo '(import scheme)'   >> $@
 	echo '(define vm #<<END' >> $@
 	cat $<     >> $@
