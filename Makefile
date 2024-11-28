@@ -10,6 +10,8 @@ VM        := chicken-chicken.vm
 JS_DIR 		:= js
 VM_SOURCE := $(JS_DIR)/vm.min.js
 
+PREFIX    ?= $(HOME)/.local/bin
+
 all: deps build
 build: $(NAME)
 
@@ -36,10 +38,17 @@ $(VM_SOURCE):
 deps:
 	chicken-install $(DEPS)
 
+install: build
+	chmod +x $(NAME)
+	cp $(NAME) $(PREFIX)/$(NAME)
+
+uninstall:
+	[ -f $(PREFIX)/$(NAME) ] && rm $(PREFIX)/$(NAME)
+
 clean:
 	rm -f *.o *.import.scm *.link
 
 fclean: clean
 	rm -f $(VM_SOURCE) $(NAME)
 
-.PHONY: build deps clean fclean
+.PHONY: build deps install uninstall clean fclean
