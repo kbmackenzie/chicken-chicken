@@ -10,3 +10,4 @@
 chicken-to-js
 node_modules/
 *.min.js
+src/vm.scm
