@@ -1,8 +1,12 @@
 NAME   := chicken-to-js
+
 VM_JS  := js/vm.min.js
 VM_SCM := src/vm.scm
 
-all: $(VM_SCM)
+all: build
+
+build: $(VM_SCM)
+	henhen build --verbose
 
 $(VM_SCM): $(VM_JS)
 	echo '(define vm #<<END' > $@
@@ -16,4 +20,4 @@ $(VM_JS):
 clean:
 	rm -f $(VM_SCM) $(VM_JS)
 
-.PHONY: clean
+.PHONY: clean build
