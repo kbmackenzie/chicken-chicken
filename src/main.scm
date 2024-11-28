@@ -1,5 +1,5 @@
 (import scheme (chicken base) (chicken format) (chicken io) (chicken process-context) srfi-1 monad)
-(import chicken-chicken)
+(import chicken-to-js)
 
 (define (read-lines-enumerated path)
   (let* ((port     (open-input-file path))
