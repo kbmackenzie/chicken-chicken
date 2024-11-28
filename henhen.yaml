@@ -1,0 +1,11 @@
+source-files:
+- src/**
+- '*.egg'
+data-files: []
+dependencies: []
+fetch: {}
+scripts: {}
+targets:
+  chicken-chicken:
+    type: egg
+    directory: '.'
