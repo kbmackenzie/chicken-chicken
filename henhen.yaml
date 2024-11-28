@@ -1,11 +1,12 @@
+name: chicken-chicken
 source-files:
 - src/**
 - '*.egg'
-data-files: []
-dependencies: []
+dependencies:
+- srfi-1
+- srfi-13
+- monad
 fetch: {}
-scripts: {}
-targets:
-  chicken-chicken:
-    type: egg
-    directory: '.'
+scripts:
+  make: 'make build'
+targets: {}
