@@ -64,7 +64,7 @@
   (define (skip-spaces str position)
     (if (is-space str position) (skip-spaces str (+ 1 position)) position))
 
-  (define (is-chicken str start-position)
+  (define (contains-chicken str start-position)
     (letrec
       ((compare-letters
          (lambda (letters position)
@@ -89,9 +89,12 @@
        (count
          (lambda (chickens position)
            (cond
-             ((is-chicken line-content position) (count (+ 1 chickens) (+ position chicken-length)))
-             ((is-space line-content position)   (count chickens (skip-spaces line-content position)))
-             ((>= position line-length)          (<either>-unit chickens))
+             ((contains-chicken line-content position)
+                (count (+ 1 chickens) (+ position chicken-length)))
+             ((is-space line-content position)
+                (count chickens (skip-spaces line-content position)))
+             ((>= position line-length)
+                (<either>-unit chickens))
              (else
                (<either>-fail (generate-error line position)))))))
       (count 0 0)))
