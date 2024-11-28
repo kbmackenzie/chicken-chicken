@@ -1,6 +1,6 @@
-(module chicken-to-js (compile)
+(module (chicken-chicken compiler) (compile)
   (import scheme (chicken base) (chicken string) (chicken format) srfi-1 srfi-13 monad)
-  (import chicken-vm)
+  (import (chicken-chicken vm))
 
   (define chicken-string  "chicken")
   (define chicken-length  (string-length chicken-string))
