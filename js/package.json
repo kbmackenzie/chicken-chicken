@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "terser static/vm.js --config-file ./terser.config.json > static/vm.min.js"
+    "build": "terser vm.js --config-file ./terser.config.json > vm.min.js"
   },
   "author": "kbmackenzie <kelly.a.betty@gmail.com>",
   "license": "GPL-3.0-only",
