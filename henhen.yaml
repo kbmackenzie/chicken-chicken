@@ -9,4 +9,6 @@ dependencies:
 fetch: {}
 scripts:
   make: 'make build'
+  install: 'make install'
+  uninstall: 'make uninstall'
 targets: {}
