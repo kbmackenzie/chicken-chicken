@@ -1,8 +1,6 @@
-(module chicken-chicken
-  (parse-instructions
-   instruction->string)
-
-  (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
+(module chicken-chicken (compile)
+  (import scheme (chicken base) (chicken string) (chicken format) srfi-1 srfi-13 monad)
+  (include "src/vm.scm")
 
   (define chicken-string  "chicken")
   (define chicken-length  (string-length chicken-string))
@@ -124,7 +122,10 @@
   (define (flat-map fn xs)
     (flatten (map fn xs)))
 
-  (define (instruction->integer-list instrs)
+  (define (enumerate-lines lines)
+    (zip (iota (length lines)) lines))
+
+  (define (instructions->integers instrs)
     (flat-map
       (lambda (instr)
         (if (has-operand? instrs)
@@ -132,7 +133,9 @@
           (list (instruction-opcode instr))))
       instrs))
 
-  (define (compile-instructions instrs)
-    (sprintf "[~A]"
-      (string-join (map string (instruction->integer-list instrs)) ", ")))
+  (define (compile lines)
+    (do/m <either>
+      (instructions <- (parse-instructions lines))
+      (integers     <- (instructions->integers instructions))
+      (sprintf "~S\n[~A]\n" vm (string-join (map string integers) ", "))))
 )
