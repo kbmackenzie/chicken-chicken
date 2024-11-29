@@ -1,21 +1,16 @@
 (import scheme (chicken base) (chicken format) (chicken io) (chicken process-context) srfi-1 monad)
-(import (chicken-chicken compiler))
+(import (chicken-chicken compiler) (chicken-chicken utils))
 
-(define (read-lines-enumerated path)
+(define (read-lines-from-file path)
   (let* ((port     (open-input-file path))
          (contents (read-lines port)))
     (close-input-port port)
-    (zip
-      (iota (length contents))
-      contents)))
+    contents))
 
 (for-each
   (lambda (path)
-    (define lines (read-lines-enumerated path))
-    (define instructions
-      (do/m <either>
-        (>>=
-          (parse-instructions lines)
-          (lambda (xs) (return (map instruction->string xs))))))
-    (printf "~S\n" instructions))
+    (with-either
+      (lambda (err)    (fprint (current-error-port) "couldn't compile ~S: ~A" path err))
+      (lambda (output) (print output))
+      (compile (read-lines-from-file path))))
   (command-line-arguments))
