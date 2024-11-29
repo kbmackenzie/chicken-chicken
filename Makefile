@@ -36,7 +36,7 @@ src/vm.scm: $(VM_SOURCE)
 	echo 'END' >> $@
 	echo '))'  >> $@
 
-$(VM_SOURCE):
+$(VM_SOURCE): $(JS_DIR)/vm.js
 	cd $(JS_DIR) && npm install && npm run build
 
 deps:
