@@ -2,7 +2,7 @@ function chicken(code, stdin) {
   /* first segment: stack + input. */
   const stack = [];
   stack[0] = stack;
-  stack[1] = stdin;
+  stack[1] = stdin || '';
 
   /* second segment: instructions. */
   for (const op of code) {
@@ -24,22 +24,22 @@ function chicken(code, stdin) {
     function add(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a, b);
+      stack.push(a + b);
     },
     function fox(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a, b);
+      stack.push(a - b);
     },
     function rooster(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a, b);
+      stack.push(a * b);
     },
     function compare(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a, b);
+      stack.push(a == b);
     },
     function pick(_) {
       const buffer = stack[stack[ip++]];
@@ -59,8 +59,8 @@ function chicken(code, stdin) {
       }
     },
     function char(_) {
-      const value = stack.pop() | 0;
-      const char = String.fromCharCode(value);
+      const value = +stack.pop() | 0;
+      const char = `&#${value};`;
       stack.push(char);
     },
     function push(n) {
