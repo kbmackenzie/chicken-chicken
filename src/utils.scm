@@ -14,5 +14,5 @@
     (eqv? 'Right (car e)))
 
   (define (with-either on-left on-right e)
-    (if (is-left e) (on-left (cdr e)) (on-right (cadr e))))
+    (if (is-left e) (on-left (cadr e)) (on-right (cadr e))))
 )
