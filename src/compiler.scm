@@ -64,7 +64,7 @@
   (define (skip-spaces str position)
     (if (is-space str position) (skip-spaces str (+ 1 position)) position))
 
-  (define (contains-chicken str start-position)
+  (define (contains-chicken str at-position)
     (letrec
       ((compare-letters
          (lambda (letters position)
@@ -74,7 +74,7 @@
                (< position (string-length str))
                (eqv? (string-ref str position) (car letters))
                (compare-letters (cdr letters) (+ 1 position)))))))
-      (compare-letters chicken-letters start-position)))
+      (compare-letters chicken-letters at-position)))
 
   (define (generate-error line position)
     (sprintf "line ~A: unrecognized character at ~A: ~A"
