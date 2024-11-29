@@ -38,7 +38,7 @@ $(VM_SOURCE):
 deps:
 	chicken-install $(DEPS)
 
-install: build
+install: deps build
 	chmod +x $(NAME)
 	cp $(NAME) $(PREFIX)/$(NAME)
 
