@@ -122,25 +122,25 @@
   ; ------------------------
   ; Compiling Chicken:
   ; ------------------------
-  (define (flat-map fn xs)
+  (define (concat-map fn xs)
     (flatten (map fn xs)))
 
   (define (enumerate-lines lines)
     (zip (iota (length lines)) lines))
 
   (define (instructions->integers instrs)
-    (flat-map
+    (concat-map
       (lambda (instr)
-        (if (has-operand? instrs)
+        (if (has-operand? instr)
           (list (instruction-opcode instr) (instruction-operand instr))
           (list (instruction-opcode instr))))
       instrs))
 
   (define (compile lines)
     (do-using <either>
-      (instructions <- (parse-instructions lines))
-      (let* ((integers  (instructions->integers instructions))
-             (js-array  (string-join (map string integers) ","))
-             (output    (sprintf "~S;\nconst instructions=[~S];\n" vm js-array)))
+      (instructions <- (parse-instructions (enumerate-lines lines)))
+      (let* ((integers (instructions->integers instructions))
+             (js-array (string-join (map number->string integers) ","))
+             (output   (sprintf "~S;\nconst instructions=[~S];\n" vm js-array)))
         (return output))))
 )
