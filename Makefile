@@ -1,13 +1,13 @@
-NAME    	:= chicken-chicken
+NAME      := chicken-chicken
 
-CSC     	?= csc
-INSTALL 	?= chicken-install
+CSC       ?= csc
+INSTALL   ?= chicken-install
 DEPS      := srfi-1 srfi-13 monad
 
 COMPILER  := chicken-chicken.compiler
 VM        := chicken-chicken.vm
 
-JS_DIR 		:= js
+JS_DIR    := js
 VM_SOURCE := $(JS_DIR)/vm.min.js
 
 PREFIX    ?= $(HOME)/.local/bin
