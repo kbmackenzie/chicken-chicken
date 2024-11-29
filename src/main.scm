@@ -1,4 +1,4 @@
-(import scheme (chicken base) (chicken format) (chicken io) (chicken process-context) srfi-1 monad)
+(import scheme (chicken format) (chicken io) (chicken process-context))
 (import (chicken-chicken compiler) (chicken-chicken utils))
 
 (define (read-lines-from-file path)
