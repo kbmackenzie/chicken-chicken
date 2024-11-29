@@ -1,6 +1,6 @@
 (module (chicken-chicken compiler) (compile)
-  (import scheme (chicken base) (chicken string) (chicken format) srfi-1 srfi-13 monad)
-  (import (chicken-chicken vm))
+  (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
+  (import (chicken-chicken vm) (chicken-chicken utils))
 
   (define chicken-string  "chicken")
   (define chicken-length  (string-length chicken-string))
@@ -122,12 +122,6 @@
   ; ------------------------
   ; Compiling Chicken:
   ; ------------------------
-  (define (concat-map fn xs)
-    (flatten (map fn xs)))
-
-  (define (enumerate-lines lines)
-    (zip (iota (length lines)) lines))
-
   (define (instructions->integers instrs)
     (concat-map
       (lambda (instr)
