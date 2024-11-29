@@ -16,8 +16,8 @@ PREFIX    ?= $(HOME)/.local/bin
 all: deps build
 build: $(NAME)
 
-$(NAME): $(COMPILER).o $(UTILS).o
-	$(CSC) -static -o $@ $^ -uses $(COMPILER) -uses $(UTILS) src/main.scm
+$(NAME): $(COMPILER).o $(UTILS).o src/main.scm
+	$(CSC) -static -o $@ $^ -uses $(COMPILER) -uses $(UTILS)
 
 $(COMPILER).o: $(VM).o $(UTILS).o src/compiler.scm
 	$(CSC) -static -c -J $^ -unit $(COMPILER) -o $@ -uses $(VM) -uses $(UTILS)
