@@ -137,8 +137,10 @@
       instrs))
 
   (define (compile lines)
-    (do/m <either>
+    (do-using <either>
       (instructions <- (parse-instructions lines))
-      (integers     <- (instructions->integers instructions))
-      (sprintf "~S\n[~A]\n" vm (string-join (map string integers) ", "))))
+      (let* ((integers  (instructions->integers instructions))
+             (js-array  (string-join (map string integers) ","))
+             (output    (sprintf "~S;\nconst instructions=[~S];\n" vm js-array)))
+        (return output))))
 )
