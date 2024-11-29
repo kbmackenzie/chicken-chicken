@@ -141,6 +141,6 @@
       (instructions <- (parse-instructions (enumerate-lines lines)))
       (let* ((integers (instructions->integers instructions))
              (js-array (string-join (map number->string integers) ","))
-             (output   (sprintf "~S;\nconst instructions=[~S];\n" vm js-array)))
+             (output   (sprintf "~A;const instructions=[~A];" vm js-array)))
         (return output))))
 )
