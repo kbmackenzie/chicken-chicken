@@ -76,4 +76,5 @@ function chicken(code, stdin) {
     const op = stack[ip++];
     operations[clamp(op, 0, 10)](op);
   }
+  return stack.pop();
 }
