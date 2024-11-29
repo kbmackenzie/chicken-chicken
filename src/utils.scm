@@ -1,5 +1,5 @@
 (module (chicken-chicken utils) (concat-map enumerate-lines is-left is-right with-either)
-  (import scheme (chicken base) srfi-1 monad)
+  (import scheme (chicken base) srfi-1)
 
   (define (concat-map fn xs)
     (flatten (map fn xs)))
