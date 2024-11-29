@@ -11,4 +11,5 @@ scripts:
   make: 'make build'
   install: 'make install'
   uninstall: 'make uninstall'
+  status: 'chicken-status'
 targets: {}
