@@ -40,7 +40,7 @@ $(VM_SOURCE):
 	cd $(JS_DIR) && npm install && npm run build
 
 deps:
-	chicken-install $(DEPS)
+	$(INSTALL) $(DEPS)
 
 install: deps build
 	chmod +x $(NAME)
