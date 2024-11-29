@@ -104,7 +104,7 @@
   (define (parse-operand lines)
     (do-using <either>
       (if (null? lines)
-        (fail "expected operand; got none")
+        (fail "expected operand; got end of input")
         (count-chicken (car lines)))))
 
   (define (parse-instructions lines)
