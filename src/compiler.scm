@@ -90,11 +90,11 @@
          (lambda (chickens position)
            (cond
              ((contains-chicken line-content position)
-                (count (+ 1 chickens) (+ position chicken-length)))
+               (count (+ 1 chickens) (+ position chicken-length)))
              ((is-space line-content position)
-                (count chickens (skip-spaces line-content position)))
+               (count chickens (skip-spaces line-content position)))
              ((>= position line-length)
-                (<either>-unit chickens))
+               (<either>-unit chickens))
              (else
                (<either>-fail (generate-error line position)))))))
       (count 0 0)))
