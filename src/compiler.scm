@@ -1,4 +1,4 @@
-(module (chicken-chicken compiler) (compile)
+(module (chicken-chicken compiler) (compile inspect)
   (import scheme (chicken base) (chicken string) (chicken format) srfi-13 monad)
   (import (chicken-chicken vm) (chicken-chicken utils))
 
@@ -133,4 +133,9 @@
              (js-array (string-join (map number->string integers) ","))
              (output   (sprintf "~A;const instructions=[~A];" vm js-array)))
         (return output))))
+
+  (define (inspect lines)
+    (do-using <either>
+      (instructions <- (parse-instructions (enumerate-lines lines)))
+      (return (map instruction->string instructions))))
 )
