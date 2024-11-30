@@ -1,4 +1,4 @@
-(import scheme (chicken format) (chicken io) (chicken process-context))
+(import scheme (chicken format) (chicken io) (chicken process-context) srfi-13)
 (import (chicken-chicken compiler) (chicken-chicken utils))
 
 (define (read-lines-from-file path)
@@ -16,13 +16,11 @@
 (define (inspect-file path)
   (with-either
     (lambda (err)    (fprintf (current-error-port) "couldn't parse ~S: ~A\n" path err))
-    (lambda (output) (printf "~S\n" output))
+    (lambda (output) (print (string-join output "\n")))
     (inspect (read-lines-from-file path))))
 
 (define (parse-args args)
   (cond
     ((string=? "inspect" (car args))  (inspect-file (cadr args)) )
     (else                             (compile-file (car args)))))
-
-(print (command-line-arguments))
 (parse-args (command-line-arguments))
