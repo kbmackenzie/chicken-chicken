@@ -1,8 +1,8 @@
-function chicken(code, stdin, options) {
+function chicken(code, input, options) {
   /* first segment: stack + input. */
   const stack = [];
   stack[0] = stack;
-  stack[1] = stdin || '';
+  stack[1] = input || '';
   const compat = options && options.compat
 
   /* second segment: instructions. */
