@@ -1,7 +1,5 @@
 name: chicken-chicken
-source-files:
-- src/**
-- '*.egg'
+source-files: []
 dependencies:
 - srfi-1
 - srfi-13
