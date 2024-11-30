@@ -10,7 +10,7 @@
 (for-each
   (lambda (path)
     (with-either
-      (lambda (err)    (fprint (current-error-port) "couldn't compile ~S: ~A" path err))
+      (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A" path err))
       (lambda (output) (print output))
       (compile (read-lines-from-file path))))
   (command-line-arguments))
