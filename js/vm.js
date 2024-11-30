@@ -14,50 +14,50 @@ function chicken(code, stdin, options) {
   let shouldExit = false;
 
   const operations = [
-    function exit() {
+    function axe() {
       shouldExit = true;
     },
     function chicken() {
       stack.push('chicken');
     },
-    function add(_) {
+    function add() {
       const a = stack.pop();
       const b = stack.pop();
       stack.push(b + a);
     },
-    function fox(_) {
+    function fox() {
       const a = stack.pop();
       const b = stack.pop();
       stack.push(b - a);
     },
-    function rooster(_) {
+    function rooster() {
       const a = stack.pop();
       const b = stack.pop();
       stack.push(b * a);
     },
-    function compare(_) {
+    function compare() {
       const a = stack.pop();
       const b = stack.pop();
       stack.push(a == b);
     },
-    function pick(_) {
+    function pick() {
       const buffer = stack[stack[ip++]];
       const value = buffer[stack.pop()];
       stack.push(value);
     },
-    function peck(_) {
+    function peck() {
       const address = stack.pop();
       const value = stack.pop();
       stack[address] = value;
     },
-    function fr(_) {
+    function fr() {
       const offset = stack.pop();
       const condition = stack.pop();
       if (condition) {
         ip += offset;
       }
     },
-    function char(_) {
+    function char() { /* aka: BBQ */
       const value = stack.pop() | 0;
       const char  = (compat) ? `&#${value};` : String.fromCharCode(value);
       stack.push(char);
