@@ -58,7 +58,7 @@ function chicken(code, stdin, options) {
       }
     },
     function char(_) {
-      const value = +stack.pop();
+      const value = stack.pop() | 0;
       const char  = (compat) ? `&#${value};` : String.fromCharCode(value);
       stack.push(char);
     },
