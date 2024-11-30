@@ -1,13 +1,12 @@
-function chicken(code, stdin) {
+function chicken(code, stdin, options) {
   /* first segment: stack + input. */
   const stack = [];
   stack[0] = stack;
   stack[1] = stdin || '';
+  const compat = options && options.compat
 
   /* second segment: instructions. */
-  for (const op of code) {
-    stack.push(op);
-  }
+  stack.push(...code);
   stack.push(0);
 
   /* third segment: runtime data. */
@@ -24,17 +23,17 @@ function chicken(code, stdin) {
     function add(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a + b);
+      stack.push(b + a);
     },
     function fox(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a - b);
+      stack.push(b - a);
     },
     function rooster(_) {
       const a = stack.pop();
       const b = stack.pop();
-      stack.push(a * b);
+      stack.push(b * a);
     },
     function compare(_) {
       const a = stack.pop();
@@ -59,8 +58,8 @@ function chicken(code, stdin) {
       }
     },
     function char(_) {
-      const value = +stack.pop() | 0;
-      const char = `&#${value};`;
+      const value = +stack.pop();
+      const char  = (compat) ? `&#${value};` : String.fromCharCode(value);
       stack.push(char);
     },
     function push(n) {
@@ -69,7 +68,7 @@ function chicken(code, stdin) {
   ];
 
   function clamp(n, min, max) {
-    return ((n < min ? min : n) > max ? max : n);
+    return n < min ? min : (n > max ? max : n);
   }
 
   while (ip < stack.length && !shouldExit) {
