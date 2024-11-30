@@ -7,10 +7,22 @@
     (close-input-port port)
     contents))
 
-(for-each
-  (lambda (path)
-    (with-either
-      (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A" path err))
-      (lambda (output) (print output))
-      (compile (read-lines-from-file path))))
-  (command-line-arguments))
+(define (compile-file path)
+  (with-either
+    (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A\n" path err))
+    (lambda (output) (print output))
+    (compile (read-lines-from-file path))))
+
+(define (inspect-file path)
+  (with-either
+    (lambda (err)    (fprintf (current-error-port) "couldn't parse ~S: ~A\n" path err))
+    (lambda (output) (printf "~S\n" output))
+    (inspect (read-lines-from-file path))))
+
+(define (parse-args args)
+  (cond
+    ((string=? "inspect" (car args))  (inspect-file (cadr args)) )
+    (else                             (compile-file (car args)))))
+
+(print (command-line-arguments))
+(parse-args (command-line-arguments))
