@@ -4,6 +4,7 @@ dependencies:
 - srfi-1
 - srfi-13
 - monad
+- getopt-long
 fetch: {}
 scripts:
   make: 'make build'
