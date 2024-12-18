@@ -1,6 +1,14 @@
-(module (chicken-chicken compiler) (compile inspect)
+(module (chicken-chicken compiler) (compile inspect chicken-options)
   (import scheme (chicken base) (chicken string) (chicken format) srfi-1 srfi-13 monad)
   (import (chicken-chicken vm) (chicken-chicken utils))
+
+  ; ------------------------
+  ; Options:
+  ; ------------------------
+  (define-record-type :chicken-options
+    (chicken-options mode)
+    chicken-options?
+    (mode chicken-options-mode))
 
   ; ------------------------
   ; Instructions:
@@ -119,15 +127,33 @@
           (list (instruction-opcode instr))))
       instrs))
 
+  ; Strict pragma for ES6 JavaScript.
+  (define strict-pragma "'use strict'")
+
+  ; Default export lambda expression. 
+  (define export-lambda "function(input, options) { chicken(instructions, input, options); }")
+
+  ; Generate module export based on 'mode' option.
+  ; When it receives an invalid mode, it does nothing other than add a semicolon.
+  (define (generate-module mode code)
+    (case mode
+      (('es 'es6 'esmodule) (sprintf "~A;export default ~A;"         code export-lambda))
+      (('node 'commonjs)    (sprintf "~A;module.exports = ~A;"       code export-lambda))
+      (('global 'vanilla)   (sprintf "{~A;globalThis.chicken = ~A;}" code export-lambda))
+      (('iife 'run 'exec)   (sprintf "~A;(function() { ~A; })();"    code export-lambda))
+      (else                 (string-append code ";"))))
+
   ; Compile lines into ES2016-compliant JavaScript.
   ; returns: either string string
-  (define (compile lines)
+  (define (compile lines options)
     (do-using <either>
       (instructions <- (parse-instructions (enumerate-lines lines)))
       (let* ((integers (instructions->integers instructions))
              (js-array (string-join (map number->string integers) ","))
-             (output   (sprintf "~A;const instructions=[~A];" vm js-array)))
-        (return output))))
+             (mode     (and (chicken-options? options) (chicken-options-mode options)))
+             (code     (sprintf "~A;const instructions=[~A]" vm js-array))
+             (module_  (generate-module mode code)))
+        (return (string-append "'use strict';" module_)))))
 
   ; Parse instructions and return list of pretty-printed instruction names.
   ; returns: either string (list of strings)

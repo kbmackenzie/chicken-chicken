@@ -11,7 +11,7 @@
   (with-either
     (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A\n" path err))
     (lambda (output) (print output))
-    (compile (read-lines-from-file path))))
+    (compile (read-lines-from-file path) #f)))
 
 (define (inspect-file path)
   (with-either
