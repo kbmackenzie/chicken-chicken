@@ -1,3 +1,26 @@
+You can pipe output from `chicken-chicken` into Node.js to execute it directly:
+
+```bash
+chicken-chicken 'hello.chicken' | node
+# prints: Hello world
+```
+
+You can also embed the generated JavaScript into a `<script>` tag in an HTML file with no issue:
+
+```bash
+# Compile with a global export:
+chicken-chicken hello.chicken --global -o hello.js
+```
+
+```html
+<!-- Include in HTML file: -->
+<script src="hello.js"></script>
+```
+
+- It compiles Chicken source code to ES2016-compliant JavaScript, which can run anywhere.
+- No parsing occurs at runtime. Very fast.
+- It tries to be as compliant with the language specification as possible.
+
 ## Building From Source
 
 **Note:** The instructions below are written with Linux in mind. Building this project on Windows requires a [make][4] implementation **and** a POSIX-compliant shell.
