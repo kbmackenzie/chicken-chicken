@@ -5,7 +5,7 @@
   ; ------------------------
   ; Compiler options:
   ; ------------------------
-  ; mode   : Determines exports. Expects a symbol: 'esmodule, 'commonjs, 'global
+  ; mode   : Determines export syntax. Expects a symbol: 'esmodule, 'commonjs, 'global
   ; compat : Enable compatibility mode; affects only the 'char' instruction.
   (define-record-type :compiler-options
     (compiler-options mode compat)
@@ -42,12 +42,12 @@
   ; push:     pushes number to stack; already explained above
 
   ; Asks if an instruction has an operand.
-  ; returns: boolean
+  ; Returns a boolean. 
   (define (has-operand? instr)
     (not (eqv? (instruction-operand instr) #f)))
 
   ; Convert an instruction to a string.
-  ; returns: string
+  ; Returns a string.
   (define (instruction->string instr)
     (case (instruction-opcode instr)
       ((0) "axe"     )
@@ -71,12 +71,12 @@
   ; The line number is important for helpful error messages!
 
   ; Utility for generating syntax error messages.
-  ; returns: string
+  ; Returns a string.
   (define (syntax-error line token)
     (sprintf "unrecognized token in line ~A: ~A" (+ (car line) 1) token))
 
   ; Count the amount of 'chicken's in a given line.
-  ; returns: either string number
+  ; Returns a number wrapped in the Either monad on a success.
   (define (count-chickens line)
     (fold
       (lambda (token acc)
@@ -89,7 +89,7 @@
       (string-tokenize (cadr line))))
 
   ; Parse a single instruction.
-  ; returns: either string instruction
+  ; Returns an instruction wrapped in the Either monad on a success.
   (define (parse-instruction lines)
     (do-using <either>
       (opcode  <- (count-chickens (car lines)))
@@ -97,7 +97,7 @@
       (return (instruction opcode operand))))
 
   ; Parse an operand for the 'pick' instruction.
-  ; returns: either string number
+  ; Returns a number wrapped in the Either monad on a success.
   (define (parse-operand lines)
     (do-using <either>
       (if (null? lines)
@@ -105,7 +105,7 @@
         (count-chickens (car lines)))))
 
   ; Parse all instructions.
-  ; returns: either string (list of instructions)
+  ; Returns a list of instructions wrapped in the Either monad on a success.
   (define (parse-instructions lines)
     (if (null? lines)
       (<either>-unit '())
@@ -118,7 +118,7 @@
   ; Compiling Chicken:
   ; ------------------------
   ; Convert a list of instructions into a list of integers.
-  ; returns: either string (list of numbers)
+  ; Returns a list of numbers wrapped in the Either monad on a success.
   (define (instructions->integers instrs)
     (concat-map
       (lambda (instr)
@@ -148,7 +148,7 @@
         (else       (string-append code ";")))))
 
   ; Compile lines into ES6-compliant JavaScript.
-  ; returns: either string string
+  ; Returns a string wrapped in the Either monad on a success.
   (define (compile lines options)
     (do-using <either>
       (instructions <- (parse-instructions (enumerate-lines lines)))
@@ -159,7 +159,7 @@
         (return (string-append "'use strict';" module_)))))
 
   ; Parse instructions and return list of pretty-printed instruction names.
-  ; returns: either string (list of strings)
+  ; Returns a list of strings wrapped in the Either monad on a success.
   (define (inspect lines)
     (do-using <either>
       (instructions <- (parse-instructions (enumerate-lines lines)))
