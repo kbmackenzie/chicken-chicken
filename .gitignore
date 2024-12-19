@@ -12,3 +12,4 @@ node_modules/
 .henhen/
 src/vm.scm
 chicken-chicken
+tidy/
