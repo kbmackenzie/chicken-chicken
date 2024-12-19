@@ -1,19 +1,21 @@
-(module (chicken-chicken compiler) (compile inspect chicken-options)
+(module (chicken-chicken compiler) (compile inspect compiler-options)
   (import scheme (chicken base) (chicken string) (chicken format) srfi-1 srfi-13 monad)
   (import (chicken-chicken vm) (chicken-chicken utils))
 
   ; ------------------------
-  ; Options:
+  ; Compiler options:
   ; ------------------------
-  (define-record-type :chicken-options
-    (chicken-options mode)
-    chicken-options?
-    (mode chicken-options-mode))
+  ; mode   : Determines exports. Expects a symbol: 'esmodule, 'commonjs, 'global
+  ; compat : Enable compatibility mode; affects only the 'char' instruction.
+  (define-record-type :compiler-options
+    (compiler-options mode compat)
+    compiler-options?
+    (mode compiler-options-mode)
+    (compat compiler-options-compat))
 
   ; ------------------------
   ; Instructions:
   ; ------------------------
-
   (define-record-type :instruction
     (instruction opcode operand)
     instruction?
@@ -63,7 +65,6 @@
   ; ------------------------
   ; Parsing Chicken:
   ; ------------------------
-
   ; For this parser, a line is a tuple containing:
   ;   1st value - line number
   ;   2nd value - line content
@@ -116,7 +117,6 @@
   ; ------------------------
   ; Compiling Chicken:
   ; ------------------------
-
   ; Convert a list of instructions into a list of integers.
   ; returns: either string (list of numbers)
   (define (instructions->integers instrs)
@@ -130,29 +130,32 @@
   ; Strict pragma for ES6 JavaScript.
   (define strict-pragma "'use strict'")
 
-  ; Default export lambda expression. 
-  (define export-lambda "function(input, options) { chicken(instructions, input, options); }")
+  ; Generate export lambda expression. 
+  (define (export-lambda options)
+    (sprintf "(input) => chicken(instructions, input, ~A)"
+      (if (and (compiler-options? options) (compiler-options-compat options)) "true" "false")))
 
   ; Generate module export based on 'mode' option.
-  ; When it receives an invalid mode, it does nothing other than add a semicolon.
-  (define (generate-module mode code)
-    (case mode
-      (('es 'es6 'esmodule) (sprintf "~A;export default ~A;"         code export-lambda))
-      (('node 'commonjs)    (sprintf "~A;module.exports = ~A;"       code export-lambda))
-      (('global 'vanilla)   (sprintf "{~A;globalThis.chicken = ~A;}" code export-lambda))
-      (('iife 'run 'exec)   (sprintf "~A;(function() { ~A; })();"    code export-lambda))
-      (else                 (string-append code ";"))))
+  ; When receiving invalid mode, do nothing other than add a semicolon.
+  (define (generate-module code options)
+    (let ((exports (export-lambda options))
+          (mode    (and (compiler-options? options) (compiler-options-mode options))))
+      (case mode
+        ((esmodule) (sprintf "~A;export default ~A;"         code exports))
+        ((commonjs) (sprintf "~A;module.exports = ~A;"       code exports))
+        ((global  ) (sprintf "{~A;globalThis.chicken = ~A;}" code exports))
+        ((debug   ) (sprintf "~A;console.log((~A;)());"      code exports))
+        (else       (string-append code ";")))))
 
-  ; Compile lines into ES2016-compliant JavaScript.
+  ; Compile lines into ES6-compliant JavaScript.
   ; returns: either string string
   (define (compile lines options)
     (do-using <either>
       (instructions <- (parse-instructions (enumerate-lines lines)))
       (let* ((integers (instructions->integers instructions))
              (js-array (string-join (map number->string integers) ","))
-             (mode     (and (chicken-options? options) (chicken-options-mode options)))
              (code     (sprintf "~A;const instructions=[~A]" vm js-array))
-             (module_  (generate-module mode code)))
+             (module_  (generate-module code options)))
         (return (string-append "'use strict';" module_)))))
 
   ; Parse instructions and return list of pretty-printed instruction names.
