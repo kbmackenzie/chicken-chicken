@@ -2,7 +2,7 @@ NAME      := chicken-chicken
 
 CSC       ?= csc
 INSTALL   ?= chicken-install
-DEPS      := srfi-1 srfi-13 monad getopt-long
+DEPS      := srfi-1 srfi-13 monad args
 
 COMPILER  := chicken-chicken.compiler
 VM        := chicken-chicken.vm
