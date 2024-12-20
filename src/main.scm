@@ -72,13 +72,21 @@
     (exit (if success? 0 1))))
 
 (define (inspect-all paths)
-  (for-each
-    (lambda (path)
-      (with-either
-        (lambda (err)    (fprintf (current-error-port) "couldn't parse ~S: ~A\n" path err))
-        (lambda (output) (print (string-join output "\n")))
-        (inspect (read-lines-from path))))
-    paths))
+  (let*
+    ((inspect-file
+       (lambda (path)
+         (with-either
+           (lambda (err)    (fprintf (current-error-port) "couldn't parse ~S: ~A\n" path err))
+           (lambda (output) (print (string-join output "\n")))
+           (inspect (read-lines-from path)))))
+     (success?
+       (call-with-current-continuation
+         (lambda (cont)
+           (handle-exceptions
+             exn
+             (begin (print-error-message exn (current-error-port)) (cont #f))
+             (for-each inspect-file paths) #t)))))
+    (exit (if success? 0 1))))
 
 (define (show-help)
   (print "Usage: chicken-chicken [OPTIONS...] [FILES...]")
@@ -90,7 +98,8 @@
 ; -----------------------
 (define (parse-options)
   (receive (options operands) (args:parse (command-line-arguments) cli-options)
-    (cond ((assv 'help    options) (show-help))
+    (cond ((assv 'help options   ) (show-help))
+          ((null? operands       ) (show-help) (exit 1))
           ((assv 'inspect options) (inspect-all operands))
           (else                    (compile-all operands options)))))
 (parse-options)
