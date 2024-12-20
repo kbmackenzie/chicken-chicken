@@ -1,4 +1,4 @@
-(import scheme (chicken format) (chicken io) (chicken port) (chicken file) (chicken process-context))
+(import scheme (chicken format) (chicken io) (chicken port) (chicken condition) (chicken process-context))
 (import srfi-1 srfi-13 args)
 (import (chicken-chicken compiler) (chicken-chicken utils))
 
@@ -30,9 +30,6 @@
 ; -----------------------
 ; I/O: 
 ; -----------------------
-(define (is-file? path)
-  (and (file-exists? path) (not (directory-exists? path))))
-
 (define (read-lines-from path)
   (let* ((is-stdin (string=? path "-"))
          (port     (if is-stdin (current-input-port) (open-input-file path)))
@@ -41,33 +38,38 @@
     contents))
 
 (define (compile-all paths options)
-  (let
+  (let*
     ((compiler-opts
        (let ((compat (assv 'compat options)))
          (compiler-options
            (get-mode options)
            (and compat (cdr compat)))))
 
+     (output-file
+       (assv 'output options))
+
      (output-port
-       (let ((output-file (assv 'output options)))
-         (if output-file
-           (open-output-file (cdr output-file))
-           (current-output-port))))
+       (if output-file
+         (open-output-file (cdr output-file))
+         (current-output-port)))
 
-     (is-stdout
-       (not (assv 'output options))))
+     (compile-file
+       (lambda (path)
+         (with-either
+           (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A\n" path err))
+           (lambda (output) (write-string output #f output-port) (newline output-port))
+           (compile (read-lines-from path) compiler-opts))))
 
-    ; compile all files:
-    (with-output-to-port output-port
-      (lambda ()
-        (for-each
-          (lambda (path)
-            (with-either
-              (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A\n" path err))
-              (lambda (output) (print output))
-              (compile (read-lines-from path) compiler-opts)))
-          paths)))
-    (if (not is-stdout) (close-output-port output-port))))
+     (success? 
+       (call-with-current-continuation
+         (lambda (cont)
+           (handle-exceptions
+             exn
+             (begin (print-error-message exn (current-error-port)) (cont #f))
+             (for-each compile-file paths) #t)))))
+
+    (if output-file (close-output-port output-port))
+    (exit (if success? 0 1))))
 
 (define (inspect-all paths)
   (for-each
