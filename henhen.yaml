@@ -11,4 +11,5 @@ scripts:
   install: 'make install'
   uninstall: 'make uninstall'
   status: 'chicken-status'
+  test: 'cd ./test && henhen run test'
 targets: {}
