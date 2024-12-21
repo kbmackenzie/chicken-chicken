@@ -6,10 +6,13 @@ INSTALL ?= chicken-install
 
 all: deps test
 
-test:
+test: chicken-chicken
 	$(CSI) spec.scm
 
 deps:
 	$(INSTALL) $(DEPS)
+
+chicken-chicken:
+	cp ../chicken-chicken .
 
 .PHONY: deps test
