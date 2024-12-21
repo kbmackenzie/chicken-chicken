@@ -1,5 +1,5 @@
-(import scheme (chicken format) (chicken io) (chicken port) (chicken condition) (chicken process-context))
-(import srfi-1 srfi-13 args)
+(import scheme (chicken format) (chicken io) (chicken port) (chicken file) (chicken process-context))
+(import srfi-1 srfi-13 monad args)
 (import (chicken-chicken compiler) (chicken-chicken utils))
 
 ; -----------------------
@@ -47,11 +47,17 @@
 ; Read all lines from a file (or from standard input).
 ; Note: It *WILL* throw an error if file doesn't exist. I handle it elsewhere.
 (define (read-lines-from path)
-  (let* ((is-stdin (string=? path "-"))
-         (port     (if is-stdin (current-input-port) (open-input-file path)))
-         (contents (read-lines port)))
-    (if (not is-stdin) (close-input-port port))
-    contents))
+  (do-using <either>
+    (if (string=? path "-")
+      (return (read-lines (current-input-port)))
+      (cond
+        ((not (is-file? path)) (fail (sprintf "couldn't read file ~S" path)))
+        ((is-directory? path)  (fail (sprintf "expected file, got directory: ~S" path)))
+        (else
+          (let* ((port    (open-input-file path))
+                 (content (read-lines port)     ))
+            (close-input-port port)
+            (return content)))))))
 
 ; Compile all input files.
 ; Evaluates options in assoc list in second argument.
@@ -71,21 +77,24 @@
          (current-output-port)))
 
      (compile-file
-       (lambda (path)
-         (with-either
-           (lambda (err)    (fprintf (current-error-port) "couldn't compile ~S: ~A\n" path err))
-           (lambda (output) (write-string output #f output-port) (newline output-port))
-           (compile (read-lines-from path) compiler-opts))))
+       (lambda (path continuation)
+         (do-using <either>
+           (with-either
+             (lambda (err)
+               (fprintf (current-error-port) "error: couldn't compile ~S: ~A\n" path err)
+               (continuation #f))
+             (lambda (output)
+               (write-string output #f output-port)
+               (newline output-port))
+             (>>=
+               (read-lines-from path)
+               (lambda (content) (compile content compiler-opts)))))))
 
      (success? 
        (call-with-current-continuation
-         (lambda (cont)
-           (handle-exceptions
-             exn
-             (begin ; report error, recover gracefully. 
-               (print-error-message exn (current-error-port))
-               (cont #f))
-             (for-each compile-file paths) #t)))))
+         (lambda (continuation)
+           (for-each (lambda (path) (compile-file path continuation)) paths)
+           #t))))
 
     (if output-file (close-output-port output-port))
     (exit (if success? 0 1))))
@@ -95,20 +104,22 @@
 (define (inspect-all paths)
   (let*
     ((inspect-file
-       (lambda (path)
-         (with-either
-           (lambda (err)    (fprintf (current-error-port) "couldn't parse ~S: ~A\n" path err))
-           (lambda (output) (print (string-join output "\n")))
-           (inspect (read-lines-from path)))))
+       (lambda (path continuation)
+         (do-using <either>
+           (with-either
+             (lambda (err)
+               (fprintf (current-error-port) "couldn't parse ~S: ~A\n" path err)
+               (continuation #f))
+             (lambda (output)
+               (print (string-join output "\n")))
+             (>>= (read-lines-from path) inspect)))))
+
      (success?
        (call-with-current-continuation
-         (lambda (cont)
-           (handle-exceptions
-             exn
-             (begin ; report error, recover gracefully. 
-               (print-error-message exn (current-error-port))
-               (cont #f))
-             (for-each inspect-file paths) #t)))))
+         (lambda (continuation)
+           (for-each (lambda (path) (inspect-file path continuation)) paths)
+           #t))))
+
     (exit (if success? 0 1))))
 
 ; Show --help message.
