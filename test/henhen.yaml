@@ -1,0 +1,8 @@
+name: chicken-chicken-test
+source-files: []
+dependencies:
+- test
+fetch: {}
+scripts:
+  test: 'make test'
+targets: {}

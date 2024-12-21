@@ -1,6 +1,15 @@
-NAME := chicken-chicken-test
-CSI  ?= csi
+NAME    := chicken-chicken-test
+DEPS    := test
 
-all: test
+CSI     ?= csi
+INSTALL ?= chicken-install
+
+all: deps test
+
 test:
 	$(CSI) spec.scm
+
+deps:
+	$(INSTALL) $(DEPS)
+
+.PHONY: deps test
