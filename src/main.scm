@@ -27,6 +27,10 @@
          (if (use-mode? option) (car option) mode))))
     (fold accumulate 'none options)))
 
+(define (get-compat options)
+  (let ((compat (assv 'compat options)))
+    (and compat (cdr compat))))
+
 ; -----------------------
 ; I/O: 
 ; -----------------------
@@ -40,10 +44,9 @@
 (define (compile-all paths options)
   (let*
     ((compiler-opts
-       (let ((compat (assv 'compat options)))
-         (compiler-options
-           (get-mode options)
-           (and compat (cdr compat)))))
+       (compiler-options
+         (get-mode options)
+         (get-compat options)))
 
      (output-file
        (assv 'output options))
