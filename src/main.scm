@@ -2,7 +2,12 @@
 (import srfi-1 srfi-13 args)
 (import (chicken-chicken compiler) (chicken-chicken utils))
 
-; Parse command-line options.
+; -----------------------
+; Options:
+; -----------------------
+
+; Command-line options ~> grammar.
+; Meant to be passed to 'args:parse'.
 (define cli-options
   (list
     (args:make-option (e esmodule) #:none              "Generate ESM-style export"     )
@@ -13,10 +18,16 @@
     (args:make-option (i inspect ) #:none              "Inspect instructions and leave")
     (args:make-option (h help    ) #:none              "Show help message"             )))
 
+; -----------------------
+; Evaluating options:
+; -----------------------
+
 ; Set of valid compiler mode symbols.
+; The first argument to the compiler-options constructor.
 (define valid-modes '(esmodule commonjs global))
 
-; Get an option symbol from the option map.
+; Determine mode to use from options.
+; Folds over option alist in order.
 (define (get-mode options)
   (let*
     ((use-mode?
@@ -27,13 +38,14 @@
          (if (use-mode? option) (car option) mode))))
     (fold accumulate 'none options)))
 
+; Determine whether to enable compatibility mode.
+; The second arugment to the compiler-options constructor.
 (define (get-compat options)
   (let ((compat (assv 'compat options)))
     (and compat (cdr compat))))
 
-; -----------------------
-; I/O: 
-; -----------------------
+; Read all lines from a file (or from standard input).
+; Note: It *WILL* throw an error if file doesn't exist. I handle it elsewhere.
 (define (read-lines-from path)
   (let* ((is-stdin (string=? path "-"))
          (port     (if is-stdin (current-input-port) (open-input-file path)))
@@ -41,6 +53,8 @@
     (if (not is-stdin) (close-input-port port))
     contents))
 
+; Compile all input files.
+; Evaluates options in assoc list in second argument.
 (define (compile-all paths options)
   (let*
     ((compiler-opts
@@ -68,12 +82,16 @@
          (lambda (cont)
            (handle-exceptions
              exn
-             (begin (print-error-message exn (current-error-port)) (cont #f))
+             (begin ; report error, recover gracefully. 
+               (print-error-message exn (current-error-port))
+               (cont #f))
              (for-each compile-file paths) #t)))))
 
     (if output-file (close-output-port output-port))
     (exit (if success? 0 1))))
 
+; Inspect instructions in all input files.
+; Always writes to standard output.
 (define (inspect-all paths)
   (let*
     ((inspect-file
@@ -87,22 +105,26 @@
          (lambda (cont)
            (handle-exceptions
              exn
-             (begin (print-error-message exn (current-error-port)) (cont #f))
+             (begin ; report error, recover gracefully. 
+               (print-error-message exn (current-error-port))
+               (cont #f))
              (for-each inspect-file paths) #t)))))
     (exit (if success? 0 1))))
 
+; Show --help message.
+; Also shown when no input files are specified.
 (define (show-help)
   (print "Usage: chicken-chicken [OPTIONS...] [FILES...]")
   (newline)
   (print* (args:usage cli-options)))
 
 ; -----------------------
-; Parsing options:
+; Running CLI: 
 ; -----------------------
-(define (parse-options)
+(define (run)
   (receive (options operands) (args:parse (command-line-arguments) cli-options)
     (cond ((assv 'help options   ) (show-help))
           ((null? operands       ) (show-help) (exit 1))
           ((assv 'inspect options) (inspect-all operands))
           (else                    (compile-all operands options)))))
-(parse-options)
+(run)
