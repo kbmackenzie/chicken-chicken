@@ -13,4 +13,7 @@ deps:
 chicken-chicken: ../chicken-chicken
 	cp $< .
 
-.PHONY: deps test
+clean:
+	rm -f chicken-chicken
+
+.PHONY: deps test clean

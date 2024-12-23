@@ -56,6 +56,7 @@ clean:
 
 fclean: clean
 	rm -f $(VM_SOURCE) $(NAME)
+	cd ./test && $(MAKE) clean
 
 test:
 	cd ./test && $(MAKE) test
