@@ -1,19 +1,21 @@
+BIN     := chicken-chicken
 DEPS    := test
+
 CSI     ?= csi
 INSTALL ?= chicken-install
 
 all: deps test
 
-test: chicken-chicken
+test: $(BIN)
 	$(CSI) -s spec.scm
 
 deps:
 	$(INSTALL) $(DEPS)
 
-chicken-chicken: ../chicken-chicken
+$(BIN): ../$(BIN)
 	cp $< .
 
 clean:
-	rm -f chicken-chicken
+	rm -f $(BIN)
 
 .PHONY: deps test clean
