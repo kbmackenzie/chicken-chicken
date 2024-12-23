@@ -13,7 +13,8 @@
   (list
     '((path "chicken/hello-world.chicken")                     (expect "Hello world"))
     '((path "chicken/quine.chicken"      )                     (expect "chicken"    ))
-    '((path "chicken/cat.chicken"        ) (input "Cat input") (expect "Cat input"  ))))
+    '((path "chicken/cat.chicken"        ) (input "Cat input") (expect "Cat input"  ))
+    '((path "chicken/deadfish.chicken"   ) (input "iissiso"  ) (expect "289"        ))))
 
 (define (assoc-get key alist default)
   (let ((item (assoc key alist)))
@@ -36,7 +37,7 @@
       (close-output-port stdin)
       (let ((output (read-string #f stdout)))
         (close-input-port stdout)
-        (string-trim-right output)))))
+        (string-trim-both output)))))
 
 (define (run-test test-case)
   (let ((path   (assoc-get 'path   test-case ""))
