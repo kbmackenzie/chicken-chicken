@@ -144,7 +144,6 @@
         ((esmodule) (sprintf "~A;export default ~A;"         code exports))
         ((commonjs) (sprintf "~A;module.exports = ~A;"       code exports))
         ((global  ) (sprintf "{~A;globalThis.chicken = ~A;}" code exports))
-        ((debug   ) (sprintf "~A;console.log((~A)());"       code exports))
         (else       (string-append code ";")))))
 
   ; Compile lines into ES6-compliant JavaScript.
