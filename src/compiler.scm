@@ -1,6 +1,14 @@
 (module (chicken-chicken compiler) (compile inspect compiler-options)
-  (import scheme (chicken base) (chicken string) (chicken format) srfi-1 srfi-13 monad)
-  (import (chicken-chicken vm) (chicken-chicken utils))
+  (import
+    scheme
+    (chicken base)
+    (chicken string)
+    (chicken format)
+    srfi-1
+    srfi-13
+    monad
+    (chicken-chicken vm)
+    (chicken-chicken utils))
 
   ; ------------------------
   ; Compiler options:
