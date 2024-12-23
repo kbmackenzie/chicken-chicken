@@ -51,8 +51,8 @@
     (if (string=? path "-")
       (return (read-lines (current-input-port)))
       (cond
-        ((not (is-file? path)) (fail (sprintf "couldn't read file ~S" path)))
-        ((is-directory? path)  (fail (sprintf "expected file, got directory: ~S" path)))
+        ((not (file-exists? path)) (fail (sprintf "couldn't read file ~S" path)))
+        ((directory-exists? path)  (fail (sprintf "expected file, got directory: ~S" path)))
         (else
           (let* ((port    (open-input-file path))
                  (content (read-lines port)     ))
