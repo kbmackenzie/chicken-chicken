@@ -2,6 +2,7 @@ NAME      := chicken-chicken
 
 CSC       ?= csc
 INSTALL   ?= chicken-install
+
 DEPS      := srfi-1 srfi-13 monad args
 
 COMPILER  := chicken-chicken.compiler
@@ -41,6 +42,7 @@ $(VM_SOURCE): $(JS_DIR)/vm.js
 
 deps:
 	$(INSTALL) $(DEPS)
+	cd ./test && $(MAKE) deps
 
 install: deps build
 	chmod +x $(NAME)
@@ -55,4 +57,7 @@ clean:
 fclean: clean
 	rm -f $(VM_SOURCE) $(NAME)
 
-.PHONY: build deps install uninstall clean fclean
+test:
+	cd ./test && $(MAKE) test
+
+.PHONY: build deps install uninstall clean fclean test

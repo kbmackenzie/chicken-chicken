@@ -5,11 +5,12 @@ dependencies:
 - srfi-13
 - monad
 - args
+- test
 fetch: {}
 scripts:
   make: 'make build'
   install: 'make install'
   uninstall: 'make uninstall'
   status: 'chicken-status'
-  test: 'cd ./test && henhen run test'
+  test: 'make test'
 targets: {}
