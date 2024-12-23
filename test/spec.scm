@@ -22,7 +22,7 @@
 
 (define (compile-file path)
   (call-with-input-pipe
-    (string-append "./chicken-chicken -g " path)
+    (string-append "./chicken-chicken -g " (qs path))
     (lambda (port) (read-string #f port))))
 
 (define (generate-script path input)
