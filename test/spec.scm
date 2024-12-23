@@ -1,41 +1,52 @@
-(import scheme (chicken base) (chicken port) (chicken process) (chicken pathname) test)
-(import (chicken-chicken compiler))
+(import
+  scheme
+  (chicken base)
+  (chicken io)
+  (chicken format)
+  (chicken port)
+  (chicken process)
+  (chicken pathname)
+  test
+  srfi-13)
 
 (define test-cases
   (list
-    (('path "test/chicken/hello-world.chicken") ('expect "Hello world")                  )
-    (('path "test/chicken/quine.chicken"      ) ('expect "chicken"    )                  )
-    (('path "test/chicken/cat.chicken"        ) ('expect "foobar"     ) ('input "foobar"))))
+    '((path "chicken/hello-world.chicken")                     (expect "Hello world"))
+    '((path "chicken/quine.chicken"      )                     (expect "chicken"    ))
+    '((path "chicken/cat.chicken"        ) (input "Cat input") (expect "Cat input"  ))))
 
 (define (assoc-get key alist default)
   (let ((item (assoc key alist)))
-    (if item (cdr item) default)))
+    (if item (cadr item) default)))
 
 (define (compile-file path)
   (call-with-input-pipe
-    (string-append "./chicken-chicken " (qs path))
+    (string-append "./chicken-chicken -g " path)
     (lambda (port) (read-string #f port))))
 
 (define (generate-script path input)
   (string-append
     (compile-file path)
-    (sprintf ";console.log(chicken(~S));" input)))
+    (sprintf "console.log(chicken(~S));" input)))
 
 (define (run-chicken path input)
   (let ((script (generate-script path input)))
-    (receive (stdout stdin pid) (process "node" '())
+    (receive (stdout stdin _pid) (process "node" '())
       (write-string script #f stdin)
+      (close-output-port stdin)
       (let ((output (read-string #f stdout)))
         (close-input-port stdout)
-        (close-output-port stdin)
-        output))))
+        (string-trim-right output)))))
 
 (define (run-test test-case)
   (let ((path   (assoc-get 'path   test-case ""))
         (input  (assoc-get 'input  test-case ""))
         (expect (assoc-get 'expect test-case "")))
-    (test (pathname-file path) (run-chicken path input) expect)))
+    (test-assert
+      (pathname-file path)
+      (string=? (run-chicken path input) expect))))
 
 (define (run-all-tests)
-  (test-group "compiling + running chicken scripts"
+  (test-group "compiling chicken scripts + running them with node"
     (for-each run-test test-cases)))
+(run-all-tests)
