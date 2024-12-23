@@ -36,7 +36,7 @@
      (accumulate
        (lambda (option mode)
          (if (use-mode? option) (car option) mode))))
-    (fold accumulate 'none options)))
+    (fold accumulate 'global options)))
 
 ; Determine whether to enable compatibility mode.
 ; The second arugment to the compiler-options constructor.
