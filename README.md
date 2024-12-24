@@ -66,6 +66,8 @@ chicken-chicken hello.chicken --global -o hello.js
 
 ## Compatibility Mode
 
+To enable compatibility mode, use the `--compat`/`-c` flag.
+
 As of now, only one thing changes in compatibility mode:
 
 - The **BBQ** instruction will generate an HTML escape code instead of a single character.
@@ -74,7 +76,7 @@ A few examples from the original Chicken implementation only work properly in co
 
 ### 99 Chickens
 
-The [*"99 chickens"* example from the original implementation] only works properly in **compatibility mode**, as a part of it explicitly relies on HTML escape codes. If you care at all, use the `--compat` flag when compiling it.
+The [*"99 chickens"* example from the original implementation][1] only works properly in **compatibility mode**, as a part of it explicitly relies on HTML escape codes. If you care at all, use the `--compat` flag when compiling it.
 
 ## Building From Source
 
