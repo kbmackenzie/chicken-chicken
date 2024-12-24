@@ -23,6 +23,7 @@
     (args:make-option (e esmodule) #:none              "Generate ESM-style export"     )
     (args:make-option (c commonjs) #:none              "Generate CommonJS-style export")
     (args:make-option (g global  ) #:none              "Generate global export"        )
+    (args:make-option (x exec    ) #:none              "Generate an IIFE"              )
     (args:make-option (o output  ) (#:required "PATH") "Output path"                   )
     (args:make-option (p compat  ) #:none              "Enable compatibility mode"     )
     (args:make-option (i inspect ) #:none              "Inspect instructions and leave")
@@ -34,7 +35,7 @@
 
 ; Set of valid compiler mode symbols.
 ; The first argument to the compiler-options constructor.
-(define valid-modes '(esmodule commonjs global))
+(define valid-modes '(esmodule commonjs global exec))
 
 ; Determine mode to use from options.
 ; Folds over option alist in order.
