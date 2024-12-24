@@ -18,10 +18,16 @@ You can compile a Chicken script to JavaScript by doing:
 chicken-chicken example.chicken
 ```
 
-You can also write the compiler output to a file:
+You can also write the output to a file:
 
 ```bash
 chicken-chicken -o example.js example.chicken
+```
+
+And you can pipe the output to Node to run it (with the `--exec` option):
+
+```bash
+chicken-chicken --exec example.chicken | node
 ```
 
 ### ES Modules
