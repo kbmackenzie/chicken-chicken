@@ -8,7 +8,7 @@ It aims to be **fully compatible** with the original Chicken implementation, whi
 - **... small**: It generates very tiny scripts; for big Chicken scripts (> 1MB), the compiler output will be **98% smaller**.
 - **... convenient**: The VM will happily produce readable output when asked; no HTML escape codes. (**Note:** HTML escape codes can still be generated in **compatibility mode**, enabled with the `--compat`/`-c` flag.)
 
-All examples from the original Chicken implementation work perfectly with Chicken Chicken! ([See observations here.])
+All examples from the original Chicken implementation work perfectly with Chicken Chicken! ([See observations here.](#compatibility-mode))
 
 ## Usage
 
@@ -32,6 +32,11 @@ To generate an ECMAScript module, use the `--esmodule` flag:
 chicken-chicken --esmodule -o example.js example.chicken
 ```
 
+```js
+import chicken from './example.js';
+const output = chicken('your input here');
+```
+
 ### CommonJS Module
 
 To generate a CommonJS module, use the `--commonjs` flag:
@@ -45,7 +50,6 @@ The generated module exports the only function you need:
 ```js
 const chicken = require('./example.js')
 const output = chicken('your input here');
-console.log(output);
 ```
 
 ### Usage On The Browsers
@@ -78,10 +82,10 @@ The [*"99 chickens"* example from the original implementation] only works proper
 
 To build `chicken-chicken` from source, you're gonna need:
 
-- The [CHICKEN Scheme][1] binaries—preferably version 5.4.0 or higher.
-- [Node.js][5] and [NPM][6].
+- The [CHICKEN Scheme][3] binaries—preferably version 5.4.0 or higher.
+- [Node.js][4] and [NPM][5].
 
-You can build it using [make][4] or [HenHen][3].
+You can build it using [make][7] or [HenHen][6].
 
 ### Make
 
@@ -113,3 +117,8 @@ henhen run install
 
 [1]: https://web.archive.org/web/20180816190122/http://torso.me/chicken
 [2]: call-cc.org/
+[3]: https://code.call-cc.org/
+[4]: https://nodejs.org/
+[5]: https://www.npmjs.com/
+[6]: https://github.com/kbmackenzie/henhen
+[7]: https://www.gnu.org/software/make/
