@@ -22,6 +22,8 @@ To build `chicken-chicken` from source, you're gonna need:
 
 You can build it using [make][5] or [HenHen][6].
 
+**Note:** When installing with [make][5], a few CHICKEN Scheme eggs will be globally installed. If you wish to avoid that, use [HenHen][6].
+
 ### Make
 
 To install the necessary CHICKEN dependencies, build the `chicken-chicken` binary and install it to `~/.local/bin`, run:
@@ -30,7 +32,7 @@ To install the necessary CHICKEN dependencies, build the `chicken-chicken` binar
 make install
 ```
 
-To install `chicken-chicken` somewhere else instead (e.g. `/usr/local/bin`), just define PREFIX:
+To install `chicken-chicken` somewhere else instead (e.g. `/usr/local/bin`), just define `PREFIX`:
 
 ```bash
 make PREFIX=/usr/local/bin install

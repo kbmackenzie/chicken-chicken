@@ -6,9 +6,17 @@ It aims to be **fully compatible** with the original Chicken implementation, whi
 
 - **Efficient**: No parsing occurs at runtime.
 - **Tiny**: It generates very tiny scripts. For big scripts (> 1MB), compiler output will be **98% smaller**.
-- **Convenient**: The VM will happily produce readable output when asked; no HTML escape codes. (**Note:** HTML escape codes can still be generated in **compatibility mode**, enabled with the `--compat`/`-c` flag.)
+- **Convenient**: The VM will happily produce readable output when asked; no HTML escape codes. You can still demand HTML escape codes by enabling [compatibility mode](#compatibility-mode).
 
-All examples from the original Chicken implementation work perfectly with Chicken Chicken! ([See observations here.](#compatibility-mode))
+All examples from the original Chicken implementation work properly with Chicken Chicken.
+
+## Install
+
+Chicken Chicken is a self-contained, static, single binary executable.
+
+Installation instructions can be found [here](./INSTALL.md). 🐔
+
+If you wish to build it from source, instructions can be found [here](./INSTALL.md#building-from-source).
 
 ## Usage
 
@@ -24,13 +32,13 @@ You can also write the output to a file:
 chicken-chicken -o example.js example.chicken
 ```
 
-And you can pipe the output to Node to run it (with the `--exec` option):
+You can compile with the `--exec` option and pipe the output to Node to run it:
 
 ```bash
 chicken-chicken --exec example.chicken | node
 ```
 
-### ES Modules
+### ES Module
 
 To generate an ECMAScript module, use the `--esmodule` flag:
 
@@ -38,7 +46,7 @@ To generate an ECMAScript module, use the `--esmodule` flag:
 chicken-chicken --esmodule -o example.js example.chicken
 ```
 
-The generated module exports one single function:
+The generated module exports a function as its **default export**.
 
 ```js
 import chicken from './example.js';
@@ -53,38 +61,32 @@ To generate a CommonJS module, use the `--commonjs` flag:
 chicken-chicken --commonjs -o example.js example.chicken
 ```
 
-The generated module exports one single function:
+The generated module exports a function:
 
 ```js
 const chicken = require('./example.js')
 const output = chicken('your input here');
 ```
 
-### Usage On The Browsers
+### Usage On The Browser
 
 ```bash
-# Compile with a global export:
-chicken-chicken hello.chicken --global -o hello.js
+# Export as an ES module:
+chicken-chicken --esmodule -o hello.js hello.chicken
 ```
 
 ```html
 <!-- Include in HTML file: -->
-<script src="hello.js"></script>
+<script type="module" src="hello.js"></script>
 ```
 
 ## Compatibility Mode
 
-To enable compatibility mode, use the `--compat`/`-c` flag.
+Chicken Chicken has a few extensions from the [original Chicken implementation][1] enabled by default—namely, the `BBQ` instruction generates a single character instead of an HTML escape code. To disable that extension and generate fully Chicken-compliant code, use **compatibility mode**.
 
-As of now, only one thing changes in compatibility mode:
+To enable compatibility mode, use the `--compat`/`-c` flag when compiling.
 
-- The **BBQ** instruction will generate an HTML escape code instead of a single character.
-
-A few examples from the original Chicken implementation only work properly in compatibility mode.
-
-### 99 Chickens
-
-The [*"99 chickens"* example from the original implementation][1] only works properly in **compatibility mode**, as a part of it explicitly relies on HTML escape codes. If you care at all, use the `--compat` flag when compiling it.
+A single example from the original Chicken implementation (*"99 chickens"*) only works properly in compatibility mode, as it relies on HTML escape codes.
 
 [1]: https://web.archive.org/web/20180816190122/http://torso.me/chicken
 [2]: call-cc.org/
