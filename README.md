@@ -32,6 +32,8 @@ To generate an ECMAScript module, use the `--esmodule` flag:
 chicken-chicken --esmodule -o example.js example.chicken
 ```
 
+The generated module exports one single function:
+
 ```js
 import chicken from './example.js';
 const output = chicken('your input here');
@@ -45,7 +47,7 @@ To generate a CommonJS module, use the `--commonjs` flag:
 chicken-chicken --commonjs -o example.js example.chicken
 ```
 
-The generated module exports the only function you need:
+The generated module exports one single function:
 
 ```js
 const chicken = require('./example.js')
@@ -78,49 +80,5 @@ A few examples from the original Chicken implementation only work properly in co
 
 The [*"99 chickens"* example from the original implementation][1] only works properly in **compatibility mode**, as a part of it explicitly relies on HTML escape codes. If you care at all, use the `--compat` flag when compiling it.
 
-## Building From Source
-
-**Note:** The instructions below are written with Linux in mind. Building this project on Windows requires a [make][4] implementation **and** a POSIX-compliant shell.
-
-To build `chicken-chicken` from source, you're gonna need:
-
-- The [CHICKEN Scheme][3] binaries—preferably version 5.4.0 or higher.
-- [Node.js][4] and [NPM][5].
-
-You can build it using [make][7] or [HenHen][6].
-
-### Make
-
-To install the necessary CHICKEN dependencies, build the `chicken-chicken` binary and install it to `~/.local/bin`, run:
-
-```bash
-make install
-```
-
-To install `chicken-chicken` somewhere else instead (e.g. `/usr/local/bin`), just define PREFIX:
-
-```bash
-make PREFIX=/usr/local/bin install
-```
-
-### HenHen
-
-To build this project in an isolated environment using [HenHen][3], just run:
-
-```bash
-henhen run make
-```
-
-To install the `chicken-chicken` binary to `~/.local/bin`, run:
-
-```bash
-henhen run install
-```
-
 [1]: https://web.archive.org/web/20180816190122/http://torso.me/chicken
 [2]: call-cc.org/
-[3]: https://code.call-cc.org/
-[4]: https://nodejs.org/
-[5]: https://www.npmjs.com/
-[6]: https://github.com/kbmackenzie/henhen
-[7]: https://www.gnu.org/software/make/
