@@ -5,8 +5,8 @@ It's written entirely in [CHICKEN Scheme][2]. 🐔
 It aims to be **fully compatible** with the original Chicken implementation, while still being:
 
 - **Efficient**: No parsing occurs at runtime.
-- **Tiny**: It generates very tiny scripts. For big scripts (> 10KiB), compiler output will be **80%** smaller.
-- **Convenient**: The VM will happily produce readable output when asked; no HTML escape codes. You can still demand HTML escape codes by enabling [compatibility mode](#compatibility-mode).
+- **Tiny**: It generates very tiny scripts. For big files (> 10KiB), compiler output will be **80%** smaller.
+- **Convenient**: The VM will happily produce readable output when asked; no HTML escape codes. You can still demand HTML escape codes by enabling [compatibility mode](./docs/chicken-chicken.md#compatibility-mode).
 
 All examples from the original Chicken implementation work properly with Chicken Chicken.
 
