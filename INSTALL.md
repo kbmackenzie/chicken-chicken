@@ -11,6 +11,10 @@ chmod +x chicken-chicken
 cp chicken-chicken ~/.local/bin
 ```
 
+### Windows
+
+After downloading, extract the archive to a directory and add that directory to your PATH. See [this StackOverflow answer][7] for some guidance with that.
+
 ## Building From Source
 
 **Note:** The instructions below are written with Linux in mind. 🐔
@@ -58,3 +62,4 @@ henhen run install
 [4]: https://www.npmjs.com/
 [5]: https://www.gnu.org/software/make/
 [6]: https://github.com/kbmackenzie/henhen
+[7]: https://stackoverflow.com/questions/44272416/how-to-add-a-folder-to-path-environment-variable-in-windows-10-with-screensho/44272417#44272417
