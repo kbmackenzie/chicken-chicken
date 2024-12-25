@@ -12,7 +12,7 @@ All examples from the original Chicken implementation work properly with Chicken
 
 ## Install
 
-Chicken Chicken is a self-contained static binary executable. Installation instructions can be found [here](./INSTALL.md). 🐔
+Chicken Chicken is a self-contained static binary executable. [Installation instructions can be found here](./INSTALL.md).
 
 If you wish to build it from source, instructions can be found [here](./INSTALL.md#building-from-source).
 
@@ -32,7 +32,9 @@ chicken-chicken --exec example.chicken | node
 
 Chicken Chicken can also generate **ECMAscript modules** and **CommonJS modules**, based on the flags given. [The full documentation can be found here](./docs/chicken-chicken.md). 🐔
 
-<img width="512" src="https://media1.tenor.com/m/TIxhU9MkeCQAAAAd/dancing-chicken-dansende-kip.gif" alt="Dancing chicken">
+<p align="center">
+  <img width="512" src="https://media1.tenor.com/m/TIxhU9MkeCQAAAAd/dancing-chicken-dansende-kip.gif" alt="Dancing chicken">
+</p>
 
 [1]: https://web.archive.org/web/20180816190122/http://torso.me/chicken
 [2]: call-cc.org/
