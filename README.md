@@ -1,11 +1,11 @@
 **Chicken Chicken** is an implementation of the [Chicken esoteric language][1]. It compiles Chicken source code to ES2020-compliant JavaScript.
 
-It's also written entirely in [CHICKEN Scheme][2]. 🐔
+It's written entirely in [CHICKEN Scheme][2]. 🐔
 
 It aims to be **fully compatible** with the original Chicken implementation, while still being:
 
 - **Efficient**: No parsing occurs at runtime.
-- **Tiny**: It generates very tiny scripts. For big scripts (> 1MB), compiler output will be **98% smaller**.
+- **Tiny**: It generates very tiny scripts. For big scripts (> 1MB), compiler output will be **90%** smaller.
 - **Convenient**: The VM will happily produce readable output when asked; no HTML escape codes. You can still demand HTML escape codes by enabling [compatibility mode](#compatibility-mode).
 
 All examples from the original Chicken implementation work properly with Chicken Chicken.
@@ -79,6 +79,10 @@ chicken-chicken --esmodule -o hello.js hello.chicken
 <!-- Include in HTML file: -->
 <script type="module" src="hello.js"></script>
 ```
+
+## Documentation
+
+The full documentation can be found [here](./docs/chicken-chicken.md).
 
 ## Compatibility Mode
 
