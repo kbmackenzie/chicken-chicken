@@ -7,6 +7,7 @@ It's written entirely in [CHICKEN Scheme][2]. 🐔
 1. [Basic Usage](#basic-usage)
 2. [Export Syntax](#export-syntax)
 3. [Command-Line Interface](#command-line-interface)
+4. [Compatibility Mode](#compatibility-mode)
 
 ## Basic Usage
 
@@ -16,6 +17,12 @@ To write the compiler output to a file, use the `-o`/`--output` option:
 
 ```bash
 chicken-chicken -o hello.js hello.chicken
+```
+
+Alternatively, you can compile with the `--exec` option and pipe the output to Node to run your program:
+
+```bash
+chicken-chicken --exec example.chicken | node
 ```
 
 ## Export Syntax
@@ -92,3 +99,14 @@ Usage: chicken-chicken [OPTIONS...] [FILES...]
  -i, --inspect            Inspect instructions and leave
  -h, --help               Show help message
 ```
+
+## Compatibility Mode
+
+Chicken Chicken has a few extensions from the [original Chicken implementation][1] enabled by default—namely, the `BBQ` instruction generates a single character instead of an HTML escape code. To disable that extension and generate fully Chicken-compliant code, use **compatibility mode**.
+
+To enable compatibility mode, use the `--compat`/`-c` flag when compiling.
+
+All examples from the original Chicken implementation work fine without compatibility mode—except for the *"99 chickens" example, which will produce slightly malformed output without compatibility mode, as it relies on HTML escape codes.
+
+[1]: https://web.archive.org/web/20180816190122/http://torso.me/chicken
+[2]: call-cc.org/
